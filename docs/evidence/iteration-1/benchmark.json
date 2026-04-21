@@ -1,0 +1,774 @@
+{
+  "metadata": {
+    "skill_name": "exosphere",
+    "skill_path": "<path/to/skill>",
+    "executor_model": "<model-name>",
+    "analyzer_model": "<model-name>",
+    "timestamp": "2026-04-21T09:00:02Z",
+    "evals_run": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "runs_per_configuration": 3
+  },
+  "runs": [
+    {
+      "eval_id": 2,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1,
+        "passed": 8,
+        "failed": 0,
+        "total": 8,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Uses CUSTOM_ELEMENTS_SCHEMA",
+          "passed": true,
+          "evidence": "users-page.component.ts:5: CUSTOM_ELEMENTS_SCHEMA,\nusers-page.component.ts:67: schemas: [CUSTOM_ELEMENTS_SCHEMA],"
+        },
+        {
+          "text": "Uses <ex-table> OR <ex-structured-list>",
+          "passed": true,
+          "evidence": "users-page.component.html:32: <ex-table"
+        },
+        {
+          "text": "Uses <ex-icon-button> or <ex-button> for row actions",
+          "passed": true,
+          "evidence": "users-page.component.html:7: <ex-button"
+        },
+        {
+          "text": "No raw <button> tags",
+          "passed": true,
+          "evidence": "no matches"
+        },
+        {
+          "text": "Imports @boomi/exosphere/dist/styles.css",
+          "passed": true,
+          "evidence": "main.ts:11: import '@boomi/exosphere/dist/styles.css';"
+        },
+        {
+          "text": "Side-effect imports @boomi/exosphere (custom element register)",
+          "passed": true,
+          "evidence": "main.ts:20: import '@boomi/exosphere';\nusers-page.component.ts:205: * via `import \"@boomi/exosphere\"`)."
+        },
+        {
+          "text": "Imports exo-table-styles.css (required for ExTable)",
+          "passed": true,
+          "evidence": "README.md:41: import '@boomi/exosphere/dist/exo-table-styles.css';    // required for ExTable\nmain.ts:15: import '@boomi/exosphere/dist/exo-table-styles.css';"
+        },
+        {
+          "text": "No hex color literals",
+          "passed": true,
+          "evidence": "no matches"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 4,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1,
+        "passed": 9,
+        "failed": 0,
+        "total": 9,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "At least one file with 'use client' directive",
+          "passed": true,
+          "evidence": "app/home-view.tsx:1: \"use client\";\napp/integrations/integrations-view.tsx:1: \"use client\";\napp/my-integration/my-integration-view.tsx:1: \"use client\";"
+        },
+        {
+          "text": "Uses ExLeftMenubar OR ExNavigationDrawer for left nav",
+          "passed": true,
+          "evidence": "components/AppShell.tsx:4: // The app chrome: left navigation drawer (ExLeftMenubar) + main content area.\ncomponents/AppShell.tsx:9: ExLeftMenubar,\ncomponents/AppShell.tsx:58: <ExLeftMenubar"
+        },
+        {
+          "text": "Uses ExPageHeader",
+          "passed": true,
+          "evidence": "components/PageHeader.tsx:4: // Reusable page header that renders breadcrumbs above an ExPageHeader.\ncomponents/PageHeader.tsx:13: ExPageHeader,\ncomponents/PageHeader.tsx:100: <ExPageHeader pageTitle={title} {...(infoText ? { \"info-text\": infoText } : {})}>"
+        },
+        {
+          "text": "Uses ExBreadcrumb + ExBreadcrumbItem",
+          "passed": true,
+          "evidence": "components/PageHeader.tsx:15: ExBreadcrumbItem,\ncomponents/PageHeader.tsx:87: <ExBreadcrumbItem\ncomponents/PageHeader.tsx:93: </ExBreadcrumbItem>"
+        },
+        {
+          "text": "Uses ExButton for the primary action",
+          "passed": true,
+          "evidence": "components/PageHeader.tsx:16: ExButton,\ncomponents/PageHeader.tsx:106: <ExButton\ncomponents/PageHeader.tsx:113: </ExButton>"
+        },
+        {
+          "text": "Uses ExMenu + ExMenuItem for overflow",
+          "passed": true,
+          "evidence": "components/PageHeader.tsx:19: ExMenuItem,\ncomponents/PageHeader.tsx:20: ExMenuItemGroup,\ncomponents/PageHeader.tsx:128: <ExMenuItemGroup>"
+        },
+        {
+          "text": "layout.tsx imports @boomi/exosphere/dist/styles.css",
+          "passed": true,
+          "evidence": "app/layout.tsx:8: import \"@boomi/exosphere/dist/styles.css\";"
+        },
+        {
+          "text": "No raw <button> tags",
+          "passed": true,
+          "evidence": "no matches"
+        },
+        {
+          "text": "No hex color literals",
+          "passed": true,
+          "evidence": "no matches"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 1,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1,
+        "passed": 10,
+        "failed": 0,
+        "total": 10,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Imports ExButton from @boomi/exosphere",
+          "passed": true,
+          "evidence": "src/App.tsx:2: import { ExButton, ExDialog } from \"@boomi/exosphere\";"
+        },
+        {
+          "text": "Imports ExDialog from @boomi/exosphere",
+          "passed": true,
+          "evidence": "src/App.tsx:2: import { ExButton, ExDialog } from \"@boomi/exosphere\";"
+        },
+        {
+          "text": "Imports @boomi/exosphere/dist/styles.css in an entry file",
+          "passed": true,
+          "evidence": "src/main.tsx:7: import \"@boomi/exosphere/dist/styles.css\";"
+        },
+        {
+          "text": "Uses <ExDialog> element in JSX",
+          "passed": true,
+          "evidence": "src/App.tsx:61: <ExDialog"
+        },
+        {
+          "text": "Uses <ExButton> element in JSX",
+          "passed": true,
+          "evidence": "src/App.tsx:53: <ExButton\nsrc/App.tsx:73: <ExButton\nsrc/App.tsx:82: <ExButton"
+        },
+        {
+          "text": "No raw <button> tags",
+          "passed": true,
+          "evidence": "no matches"
+        },
+        {
+          "text": "No raw <dialog> tags",
+          "passed": true,
+          "evidence": "no matches"
+        },
+        {
+          "text": "No hex color literals",
+          "passed": true,
+          "evidence": "no matches"
+        },
+        {
+          "text": "README/explainer mentions install command",
+          "passed": true,
+          "evidence": "README.md:28: npm install @boomi/exosphere"
+        },
+        {
+          "text": "Mentions Jest transformIgnorePatterns OR explicitly notes Vitest/no-Jest",
+          "passed": true,
+          "evidence": "README.md:135: - **Vitest** \u2014 works out of the box. For Jest, add the `transformIgnorePatterns`"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 5,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Response suggests ExChart first",
+          "passed": true,
+          "evidence": "reasoning.md:7: 3. `references/components/chart.md` \u2014 the scraped Storybook doc for `ExChart`.\nreasoning.md:9: 5. `references/decision-guides/picking-components.md` and `references/components/_index.md` \u2014 for the \"user says X \u2192 use Y\" framing and the \nreasoning.md:27: - Verify via live Storybook lookup / their Exosphere version whether `ExChart` actually ships radar today (the chart.md evidence suggests it"
+        },
+        {
+          "text": "Response mentions radar is not supported / not in Exosphere",
+          "passed": true,
+          "evidence": "reasoning.md:6: 2. `references/decision-guides/component-vs-custom.md` \u2014 the literal three-step flow; notably, this file contains a scripted example for \"I \nreasoning.md:15: - `component-exports.json` (authoritative for 7.8.3) explicitly says: `\"e.g., bar, line, area, donut/pie are in; radar is not as of 7.8.3.\"`\nreasoning.md:16: - `picking-components.md` says radar falls into the \"truly unsupported \u2192 custom flow\" bucket."
+        },
+        {
+          "text": "Response explicitly asks user for approval before going custom",
+          "passed": true,
+          "evidence": "reasoning.md:40: I did **not** scaffold a custom `RadarChart.tsx`, did **not** write `assets/custom-component-banner.md` content into a new file, and did **n\nreasoning.md:58: The response performs the suggest-and-ask portion of suggest-ask-flag exactly. If the user responds with a version that ships radar, we use \nresponse.md:17: 1. **Check whether a newer `@boomi/exosphere` on your project already ships radar on `ExChart`.** If you can tell me the version in your `pa"
+        },
+        {
+          "text": "Response does NOT include a built radar chart component file",
+          "passed": true,
+          "evidence": "no match"
+        },
+        {
+          "text": "Response mentions / alludes to the custom-component banner / flag",
+          "passed": true,
+          "evidence": "reasoning.md:5: 1. `SKILL.md` \u2014 the main workflow, especially sections 2 (Map to a component), 5 (suggest \u2192 ask \u2192 flag), and the \"Custom components \u2014 the ha\nreasoning.md:21: Given SKILL.md's explicit rule \u2014 \"Before deciding 'not in Exosphere,' cross-check *both* `assets/component-exports.json` *and* do a live `sc\nreasoning.md:35: > \"Exosphere doesn't ship a dedicated radar chart today \u2026 I can build a custom component styled strictly with Exosphere tokens so it still f"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 6,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1,
+        "passed": 8,
+        "failed": 0,
+        "total": 8,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "No hex color literals in refactored SaveBar",
+          "passed": true,
+          "evidence": "no matches"
+        },
+        {
+          "text": "Uses --exo-color-* semantic tokens",
+          "passed": true,
+          "evidence": "SaveBar.tsx:9: background: \"var(--exo-color-background-secondary)\",\nSaveBar.tsx:10: borderTop: \"1px solid var(--exo-color-border)\","
+        },
+        {
+          "text": "Uses --exo-spacing-* tokens",
+          "passed": true,
+          "evidence": "SaveBar.tsx:8: padding: \"var(--exo-spacing-standard)\",\nSaveBar.tsx:11: gap: \"var(--exo-spacing-small)\","
+        },
+        {
+          "text": "Uses --exo-radius-* tokens (or removes the border-radius in favor of component default)",
+          "passed": true,
+          "evidence": "SaveBar.tsx:1: import { ExButton, ButtonType, ButtonFlavor } from \"@boomi/exosphere\";\nSaveBar.tsx:15: <ExButton\nSaveBar.tsx:21: </ExButton>"
+        },
+        {
+          "text": "Uses ExButton instead of raw <button>",
+          "passed": true,
+          "evidence": "SaveBar.tsx:1: import { ExButton, ButtonType, ButtonFlavor } from \"@boomi/exosphere\";\nSaveBar.tsx:15: <ExButton\nSaveBar.tsx:21: </ExButton>"
+        },
+        {
+          "text": "No raw <button> tags",
+          "passed": true,
+          "evidence": "no matches"
+        },
+        {
+          "text": "Imports ExButton from @boomi/exosphere",
+          "passed": true,
+          "evidence": "SaveBar.tsx:1: import { ExButton, ButtonType, ButtonFlavor } from \"@boomi/exosphere\";"
+        },
+        {
+          "text": "No px literals beyond 1px borders",
+          "passed": true,
+          "evidence": "no matches"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 3,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1,
+        "passed": 9,
+        "failed": 0,
+        "total": 9,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Uses <ex-input> for text fields",
+          "passed": true,
+          "evidence": "ProfileForm.vue:6: *   - <ex-input>        for first name, last name, job title\nProfileForm.vue:104: <ex-input\nProfileForm.vue:111: <ex-input"
+        },
+        {
+          "text": "Uses <ex-combobox> for country (many options)",
+          "passed": true,
+          "evidence": "ProfileForm.vue:7: *   - <ex-combobox>     single-select, ~200 countries w/ built-in typeahead\nProfileForm.vue:120: <ex-combobox"
+        },
+        {
+          "text": "Does NOT use <ex-select> for country",
+          "passed": true,
+          "evidence": "no matches"
+        },
+        {
+          "text": "Uses <ex-date-picker>",
+          "passed": true,
+          "evidence": "ProfileForm.vue:8: *   - <ex-date-picker>  single date for birthday\nProfileForm.vue:134: <ex-date-picker"
+        },
+        {
+          "text": "Uses <ex-toggle> for the updates checkbox",
+          "passed": true,
+          "evidence": "ProfileForm.vue:9: *   - <ex-toggle>       instant on/off for product-update emails\nProfileForm.vue:153: <ex-toggle"
+        },
+        {
+          "text": "Uses <ex-button>",
+          "passed": true,
+          "evidence": "ProfileForm.vue:10: *   - <ex-button>       Save (primary + branded flavor)\nProfileForm.vue:163: <ex-button"
+        },
+        {
+          "text": "Configures isCustomElement for Vue compiler",
+          "passed": true,
+          "evidence": "README.md:42: the three imports in `main.ts` and the `isCustomElement` option in\nmain.ts:27: app.config.compilerOptions.isCustomElement = (tag: string) =>\nvite.config.ts:14: isCustomElement: (tag) => tag.startsWith(\"ex-\"),"
+        },
+        {
+          "text": "Imports @boomi/exosphere/dist/styles.css",
+          "passed": true,
+          "evidence": "README.md:61: - **CSS imports** \u2014 `main.ts` imports both `@boomi/exosphere/dist/styles.css`\nmain.ts:14: import \"@boomi/exosphere/dist/styles.css\";"
+        },
+        {
+          "text": "No hex color literals",
+          "passed": true,
+          "evidence": "no matches"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 2,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.25,
+        "passed": 2,
+        "failed": 6,
+        "total": 8,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Uses CUSTOM_ELEMENTS_SCHEMA",
+          "passed": false,
+          "evidence": "no matches"
+        },
+        {
+          "text": "Uses <ex-table> OR <ex-structured-list>",
+          "passed": false,
+          "evidence": "no matches"
+        },
+        {
+          "text": "Uses <ex-icon-button> or <ex-button> for row actions",
+          "passed": false,
+          "evidence": "no matches"
+        },
+        {
+          "text": "No raw <button> tags",
+          "passed": true,
+          "evidence": "no matches"
+        },
+        {
+          "text": "Imports @boomi/exosphere/dist/styles.css",
+          "passed": false,
+          "evidence": "no matches"
+        },
+        {
+          "text": "Side-effect imports @boomi/exosphere (custom element register)",
+          "passed": false,
+          "evidence": "no matches"
+        },
+        {
+          "text": "Imports exo-table-styles.css (required for ExTable)",
+          "passed": false,
+          "evidence": "no matches"
+        },
+        {
+          "text": "No hex color literals",
+          "passed": true,
+          "evidence": "no matches"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 4,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.3333333333333333,
+        "passed": 3,
+        "failed": 6,
+        "total": 9,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "At least one file with 'use client' directive",
+          "passed": true,
+          "evidence": "components/DashboardShell.tsx:1: \"use client\";\ncomponents/PageHeader.tsx:1: \"use client\";\ncomponents/SideNav.tsx:1: \"use client\";"
+        },
+        {
+          "text": "Uses ExLeftMenubar OR ExNavigationDrawer for left nav",
+          "passed": false,
+          "evidence": "no matches"
+        },
+        {
+          "text": "Uses ExPageHeader",
+          "passed": false,
+          "evidence": "no matches"
+        },
+        {
+          "text": "Uses ExBreadcrumb + ExBreadcrumbItem",
+          "passed": false,
+          "evidence": "no matches"
+        },
+        {
+          "text": "Uses ExButton for the primary action",
+          "passed": false,
+          "evidence": "no matches"
+        },
+        {
+          "text": "Uses ExMenu + ExMenuItem for overflow",
+          "passed": false,
+          "evidence": "no matches"
+        },
+        {
+          "text": "layout.tsx imports @boomi/exosphere/dist/styles.css",
+          "passed": true,
+          "evidence": "app/layout.tsx:3: import \"@boomi/exosphere/dist/styles.css\";"
+        },
+        {
+          "text": "No raw <button> tags",
+          "passed": true,
+          "evidence": "no matches"
+        },
+        {
+          "text": "No hex color literals",
+          "passed": false,
+          "evidence": "app/globals.css:7: background: var(--exo-color-surface-base, #f5f6f8);\napp/globals.css:8: color: var(--exo-color-text-primary, #1a1f2c);\ncomponents/DashboardShell.tsx:13: background: \"var(--exo-color-surface-base, #f5f6f8)\","
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 1,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1,
+        "passed": 10,
+        "failed": 0,
+        "total": 10,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Imports ExButton from @boomi/exosphere",
+          "passed": true,
+          "evidence": "src/App.tsx:2: import { ExButton, ExDialog } from \"@boomi/exosphere\";"
+        },
+        {
+          "text": "Imports ExDialog from @boomi/exosphere",
+          "passed": true,
+          "evidence": "src/App.tsx:2: import { ExButton, ExDialog } from \"@boomi/exosphere\";"
+        },
+        {
+          "text": "Imports @boomi/exosphere/dist/styles.css in an entry file",
+          "passed": true,
+          "evidence": "src/main.tsx:6: import \"@boomi/exosphere/dist/styles.css\";"
+        },
+        {
+          "text": "Uses <ExDialog> element in JSX",
+          "passed": true,
+          "evidence": "src/App.tsx:24: <ExDialog"
+        },
+        {
+          "text": "Uses <ExButton> element in JSX",
+          "passed": true,
+          "evidence": "src/App.tsx:20: <ExButton flavor=\"base\" type=\"primary\" onClick={openDialog}>\nsrc/App.tsx:32: <ExButton flavor=\"base\" type=\"secondary\" onClick={closeDialog}>\nsrc/App.tsx:35: <ExButton flavor=\"base\" type=\"primary\" onClick={handleConfirm}>"
+        },
+        {
+          "text": "No raw <button> tags",
+          "passed": true,
+          "evidence": "no matches"
+        },
+        {
+          "text": "No raw <dialog> tags",
+          "passed": true,
+          "evidence": "no matches"
+        },
+        {
+          "text": "No hex color literals",
+          "passed": true,
+          "evidence": "no matches"
+        },
+        {
+          "text": "README/explainer mentions install command",
+          "passed": true,
+          "evidence": "README.md:22: npm install @boomi/exosphere"
+        },
+        {
+          "text": "Mentions Jest transformIgnorePatterns OR explicitly notes Vitest/no-Jest",
+          "passed": true,
+          "evidence": "README.md:83: - If you use Jest for testing, you will need to add Exosphere to `transformIgnorePatterns` and map it to its ESM build via `moduleNameMapper"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 5,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.6,
+        "passed": 3,
+        "failed": 2,
+        "total": 5,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Response suggests ExChart first",
+          "passed": false,
+          "evidence": "no matches"
+        },
+        {
+          "text": "Response mentions radar is not supported / not in Exosphere",
+          "passed": true,
+          "evidence": "response.md:9: To avoid guessing wrong, I've built a **library-agnostic radar chart** using **Recharts** (the most common React charting library). It's des"
+        },
+        {
+          "text": "Response explicitly asks user for approval before going custom",
+          "passed": false,
+          "evidence": "no matches"
+        },
+        {
+          "text": "Response does NOT include a built radar chart component file",
+          "passed": true,
+          "evidence": "no match"
+        },
+        {
+          "text": "Response mentions / alludes to the custom-component banner / flag",
+          "passed": true,
+          "evidence": "response.md:3: Happy to help! Before diving in, I want to flag something: I'm not familiar with a React library or framework named \"Exosphere.\" There are a"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 6,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.5,
+        "passed": 4,
+        "failed": 4,
+        "total": 8,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "No hex color literals in refactored SaveBar",
+          "passed": true,
+          "evidence": "no matches"
+        },
+        {
+          "text": "Uses --exo-color-* semantic tokens",
+          "passed": true,
+          "evidence": "SaveBar.tsx:10: background=\"var(--exo-color-surface-subtle)\"\nSaveBar.tsx:11: borderTop=\"var(--exo-border-width-s) solid var(--exo-color-border-subtle)\""
+        },
+        {
+          "text": "Uses --exo-spacing-* tokens",
+          "passed": false,
+          "evidence": "no matches"
+        },
+        {
+          "text": "Uses --exo-radius-* tokens (or removes the border-radius in favor of component default)",
+          "passed": false,
+          "evidence": "no matches"
+        },
+        {
+          "text": "Uses ExButton instead of raw <button>",
+          "passed": false,
+          "evidence": "no matches"
+        },
+        {
+          "text": "No raw <button> tags",
+          "passed": true,
+          "evidence": "no matches"
+        },
+        {
+          "text": "Imports ExButton from @boomi/exosphere",
+          "passed": false,
+          "evidence": "no matches"
+        },
+        {
+          "text": "No px literals beyond 1px borders",
+          "passed": true,
+          "evidence": "no matches"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 3,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.1111111111111111,
+        "passed": 1,
+        "failed": 8,
+        "total": 9,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Uses <ex-input> for text fields",
+          "passed": false,
+          "evidence": "no matches"
+        },
+        {
+          "text": "Uses <ex-combobox> for country (many options)",
+          "passed": false,
+          "evidence": "no matches"
+        },
+        {
+          "text": "Does NOT use <ex-select> for country",
+          "passed": true,
+          "evidence": "no matches"
+        },
+        {
+          "text": "Uses <ex-date-picker>",
+          "passed": false,
+          "evidence": "no matches"
+        },
+        {
+          "text": "Uses <ex-toggle> for the updates checkbox",
+          "passed": false,
+          "evidence": "no matches"
+        },
+        {
+          "text": "Uses <ex-button>",
+          "passed": false,
+          "evidence": "no matches"
+        },
+        {
+          "text": "Configures isCustomElement for Vue compiler",
+          "passed": false,
+          "evidence": "no matches"
+        },
+        {
+          "text": "Imports @boomi/exosphere/dist/styles.css",
+          "passed": false,
+          "evidence": "no matches"
+        },
+        {
+          "text": "No hex color literals",
+          "passed": false,
+          "evidence": "App.vue:29: background: #f2f4f7;\nProfileForm.vue:176: background: #ffffff;\nProfileForm.vue:177: border: 1px solid #e4e7ec;"
+        }
+      ],
+      "notes": []
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 1.0,
+        "stddev": 0.0,
+        "min": 1,
+        "max": 1
+      },
+      "time_seconds": {
+        "mean": 0.0,
+        "stddev": 0.0,
+        "min": 0.0,
+        "max": 0.0
+      },
+      "tokens": {
+        "mean": 0.0,
+        "stddev": 0.0,
+        "min": 0,
+        "max": 0
+      }
+    },
+    "without_skill": {
+      "pass_rate": {
+        "mean": 0.4657,
+        "stddev": 0.3145,
+        "min": 0.1111,
+        "max": 1
+      },
+      "time_seconds": {
+        "mean": 0.0,
+        "stddev": 0.0,
+        "min": 0.0,
+        "max": 0.0
+      },
+      "tokens": {
+        "mean": 0.0,
+        "stddev": 0.0,
+        "min": 0,
+        "max": 0
+      }
+    },
+    "delta": {
+      "pass_rate": "+0.53",
+      "time_seconds": "+0.0",
+      "tokens": "+0"
+    }
+  },
+  "notes": []
+}

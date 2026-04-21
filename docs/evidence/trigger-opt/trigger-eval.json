@@ -1,0 +1,410 @@
+[
+  {
+    "query": "I'm building a new integration detail page in the Boomi Integration Designer and I need the top header with breadcrumbs like 'Integrations / Salesforce to NetSuite' plus a primary action button to run it. Can you give me the React code?",
+    "should_trigger": true
+  },
+  {
+    "query": "hey so the settings page in our atom manager has this ugly gray button that doesnt match the rest of the app \u2014 can you look at src/components/atom-settings/SaveButton.tsx and fix the styling to use the design system tokens like the other buttons do?",
+    "should_trigger": true
+  },
+  {
+    "query": "Is there a way to use @boomi/exosphere with Next.js 14 App Router? Keep getting 'window is not defined' errors when I try to render ExDialog server-side",
+    "should_trigger": true
+  },
+  {
+    "query": "refactor this component to remove all the hex colors and replace them with CSS custom properties\n\n```tsx\n<div style={{background: '#f7f9fc', color: '#1a1a1a', padding: '16px'}}>Content</div>\n```\n\nit's in the Boomi runtime UI btw",
+    "should_trigger": true
+  },
+  {
+    "query": "design system question \u2014 for a 'Are you sure?' destructive confirmation modal what flavor/type combo should the danger button use? we're using Exosphere",
+    "should_trigger": true
+  },
+  {
+    "query": "Angular 17 standalone component that renders <ex-button> is throwing 'ex-button is not a known element'. What am I missing?",
+    "should_trigger": true
+  },
+  {
+    "query": "I need to add a color picker to the integration theming page. Users will pick a custom brand color. Does our design system have that?",
+    "should_trigger": true
+  },
+  {
+    "query": "i want to add a data grid with sorting/filtering/pagination for the user admin screen in our vue app. what should i use",
+    "should_trigger": true
+  },
+  {
+    "query": "my teammate keeps using raw <button> tags in her PRs instead of the ExButton wrapper. Can you add a CI check or lint rule that catches this?",
+    "should_trigger": true
+  },
+  {
+    "query": "we just got a design mock from Sarah on the UX team for the new atom catalog page \u2014 it's a bunch of cards with status pills and an 'add' FAB. Need to implement in our React app (yes it's a Boomi product).",
+    "should_trigger": true
+  },
+  {
+    "query": "how do I center a div with flexbox",
+    "should_trigger": false
+  },
+  {
+    "query": "best practices for React error boundaries in production apps \u2014 we're on React 18",
+    "should_trigger": false
+  },
+  {
+    "query": "our marketing site built with Next.js needs a hero section with an email signup form. can you write the components? we use Tailwind and shadcn/ui",
+    "should_trigger": false
+  },
+  {
+    "query": "migrate this Material UI DataGrid to Ant Design's Table \u2014 here's the current implementation",
+    "should_trigger": false
+  },
+  {
+    "query": "what's the difference between Lit and LitElement in web components? I'm trying to understand reactive properties",
+    "should_trigger": false
+  },
+  {
+    "query": "write me a SQL query that joins users and orders tables",
+    "should_trigger": false
+  },
+  {
+    "query": "how do I configure custom web components in a Vue 3 project without getting console warnings",
+    "should_trigger": false
+  },
+  {
+    "query": "I'm building a small internal tool with Chakra UI \u2014 need a form with 3 text inputs and a submit button. Can you write it?",
+    "should_trigger": false
+  },
+  {
+    "query": "what does --exo-color-background-danger-strong resolve to in dark mode",
+    "should_trigger": true
+  },
+  {
+    "query": "explain the difference between `role=\"dialog\"` and `aria-modal` for accessibility",
+    "should_trigger": false
+  },
+  {
+    "query": "give me a vue template using <ex-button>",
+    "should_trigger": true
+  },
+  {
+    "query": "show me the props for ExIconButton",
+    "should_trigger": true
+  },
+  {
+    "query": "how do I use ExLink in react",
+    "should_trigger": true
+  },
+  {
+    "query": "ExInput vs ExRichInput \u2014 when do I pick which",
+    "should_trigger": true
+  },
+  {
+    "query": "what events does ExTextarea emit",
+    "should_trigger": true
+  },
+  {
+    "query": "quick \u2014 what's the right way to render <ex-rich-input> in angular",
+    "should_trigger": true
+  },
+  {
+    "query": "quick \u2014 what's the right way to render <ex-rich-input-suggestion> in angular",
+    "should_trigger": true
+  },
+  {
+    "query": "i need a ExSelect example",
+    "should_trigger": true
+  },
+  {
+    "query": "ExCombobox vs ExSelect \u2014 when do I pick which",
+    "should_trigger": true
+  },
+  {
+    "query": "show me the props for ExDropdown",
+    "should_trigger": true
+  },
+  {
+    "query": "give me a vue template using <ex-checkbox>",
+    "should_trigger": true
+  },
+  {
+    "query": "ExCheckboxGroup vs ExRadioGroup \u2014 when do I pick which",
+    "should_trigger": true
+  },
+  {
+    "query": "docs for ExNestedCheckboxGroup",
+    "should_trigger": true
+  },
+  {
+    "query": "is there a way to make ExRadio responsive",
+    "should_trigger": true
+  },
+  {
+    "query": "show me the props for ExRadioGroup",
+    "should_trigger": true
+  },
+  {
+    "query": "loading state for ExToggle?",
+    "should_trigger": true
+  },
+  {
+    "query": "can i style ExDatePicker with my own CSS or does it take tokens only",
+    "should_trigger": true
+  },
+  {
+    "query": "how do I use ExTimeRangePicker in react",
+    "should_trigger": true
+  },
+  {
+    "query": "how do I use ExFileUploader in react",
+    "should_trigger": true
+  },
+  {
+    "query": "show me the props for ExLabel",
+    "should_trigger": true
+  },
+  {
+    "query": "quick \u2014 what's the right way to render <ex-alert-banner> in angular",
+    "should_trigger": true
+  },
+  {
+    "query": "quick \u2014 what's the right way to render <ex-alert-popup> in angular",
+    "should_trigger": true
+  },
+  {
+    "query": "is there a way to make ExAlertToast responsive",
+    "should_trigger": true
+  },
+  {
+    "query": "loading state for ExLoader?",
+    "should_trigger": true
+  },
+  {
+    "query": "how do I use ExEmptyState in react",
+    "should_trigger": true
+  },
+  {
+    "query": "is there a way to make ExPill responsive",
+    "should_trigger": true
+  },
+  {
+    "query": "quick \u2014 what's the right way to render <ex-pill-group> in angular",
+    "should_trigger": true
+  },
+  {
+    "query": "ExBadge vs ExPill \u2014 when do I pick which",
+    "should_trigger": true
+  },
+  {
+    "query": "give me a vue template using <ex-badge-group>",
+    "should_trigger": true
+  },
+  {
+    "query": "ExBreadcrumb vs ExTab \u2014 when do I pick which",
+    "should_trigger": true
+  },
+  {
+    "query": "is there a way to make ExBreadcrumbItem responsive",
+    "should_trigger": true
+  },
+  {
+    "query": "can i style ExLeftMenubar with my own CSS or does it take tokens only",
+    "should_trigger": true
+  },
+  {
+    "query": "quick \u2014 what's the right way to render <ex-leftmenubar-item> in angular",
+    "should_trigger": true
+  },
+  {
+    "query": "how do I disable ExLeftMenubarTableCol",
+    "should_trigger": true
+  },
+  {
+    "query": "loading state for ExLeftMenubarTableRow?",
+    "should_trigger": true
+  },
+  {
+    "query": "what events does ExLeftmenubarCategoryTitle emit",
+    "should_trigger": true
+  },
+  {
+    "query": "aria-label pattern for ExLeftmenubarLink",
+    "should_trigger": true
+  },
+  {
+    "query": "i need a ExLeftmenubarAdjustable that adjustable left menubar",
+    "should_trigger": true
+  },
+  {
+    "query": "how do I use ExLeftmenubarDropdown in react",
+    "should_trigger": true
+  },
+  {
+    "query": "aria-label pattern for ExLeftmenubarDivider",
+    "should_trigger": true
+  },
+  {
+    "query": "aria-label pattern for ExNavigationDrawer",
+    "should_trigger": true
+  },
+  {
+    "query": "i need a ExTab example",
+    "should_trigger": true
+  },
+  {
+    "query": "ExTabItem vs another Exosphere component \u2014 when do I pick which",
+    "should_trigger": true
+  },
+  {
+    "query": "can i style ExPagination with my own CSS or does it take tokens only",
+    "should_trigger": true
+  },
+  {
+    "query": "is ExWizard the right choice for multi-step onboarding flow",
+    "should_trigger": true
+  },
+  {
+    "query": "what events does ExWizardItem emit",
+    "should_trigger": true
+  },
+  {
+    "query": "i need a ExMenu example",
+    "should_trigger": true
+  },
+  {
+    "query": "quick \u2014 what's the right way to render <ex-menu-item> in angular",
+    "should_trigger": true
+  },
+  {
+    "query": "aria-label pattern for ExMenuItemGroup",
+    "should_trigger": true
+  },
+  {
+    "query": "is ExPageHeader the right choice for standard page header with title + actions",
+    "should_trigger": true
+  },
+  {
+    "query": "show me the props for ExFooter",
+    "should_trigger": true
+  },
+  {
+    "query": "show me the props for ExFooterLinkGroup",
+    "should_trigger": true
+  },
+  {
+    "query": "can i style ExFooterLink with my own CSS or does it take tokens only",
+    "should_trigger": true
+  },
+  {
+    "query": "show me the props for ExSegmentedControls",
+    "should_trigger": true
+  },
+  {
+    "query": "is ExSegmentedControl the right choice for single segment",
+    "should_trigger": true
+  },
+  {
+    "query": "i need a ExAccordion that FAQ-style expandable sections",
+    "should_trigger": true
+  },
+  {
+    "query": "is ExAccordionItem the right choice for one accordion section",
+    "should_trigger": true
+  },
+  {
+    "query": "loading state for ExCard?",
+    "should_trigger": true
+  },
+  {
+    "query": "what events does ExTile emit",
+    "should_trigger": true
+  },
+  {
+    "query": "aria-label pattern for ExContainer",
+    "should_trigger": true
+  },
+  {
+    "query": "how do I use ExPanel in react",
+    "should_trigger": true
+  },
+  {
+    "query": "ExResizeHandle vs ExSideDrawer \u2014 when do I pick which",
+    "should_trigger": true
+  },
+  {
+    "query": "how do I disable ExDialog",
+    "should_trigger": true
+  },
+  {
+    "query": "is there a way to make ExSideDrawer responsive",
+    "should_trigger": true
+  },
+  {
+    "query": "show me the props for ExTooltip",
+    "should_trigger": true
+  },
+  {
+    "query": "docs for ExFilter",
+    "should_trigger": true
+  },
+  {
+    "query": "can i style ExTable with my own CSS or does it take tokens only",
+    "should_trigger": true
+  },
+  {
+    "query": "show me the props for ExStructuredList",
+    "should_trigger": true
+  },
+  {
+    "query": "is there a way to make ExStructuredListBody responsive",
+    "should_trigger": true
+  },
+  {
+    "query": "what events does ExStructuredListRow emit",
+    "should_trigger": true
+  },
+  {
+    "query": "i need a ExStructuredListCol that single column",
+    "should_trigger": true
+  },
+  {
+    "query": "give me a vue template using <ex-structured-list-col-group>",
+    "should_trigger": true
+  },
+  {
+    "query": "loading state for ExStructuredListSubheader?",
+    "should_trigger": true
+  },
+  {
+    "query": "docs for ExTree",
+    "should_trigger": true
+  },
+  {
+    "query": "i need a ExCarousel that horizontal image carousel",
+    "should_trigger": true
+  },
+  {
+    "query": "is ExCarouselItem the right choice for a single slide in the carousel",
+    "should_trigger": true
+  },
+  {
+    "query": "loading state for ExChart?",
+    "should_trigger": true
+  },
+  {
+    "query": "quick \u2014 what's the right way to render <ex-json-editor> in angular",
+    "should_trigger": true
+  },
+  {
+    "query": "ExRichTextEditor vs ExTextarea \u2014 when do I pick which",
+    "should_trigger": true
+  },
+  {
+    "query": "show me the props for ExIcon",
+    "should_trigger": true
+  },
+  {
+    "query": "how do I use ExAvatar in react",
+    "should_trigger": true
+  },
+  {
+    "query": "how do i show an exosphere toast programmatically with ToastController",
+    "should_trigger": true
+  }
+]

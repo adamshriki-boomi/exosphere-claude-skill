@@ -1,0 +1,21 @@
+{
+  "name": "exosphere-skill-build-tools",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Build-tools for the Boomi Exosphere Claude skill. Not shipped in the .skill bundle; used to regenerate references from the Exosphere Storybook when a new release lands.",
+  "scripts": {
+    "scrape": "node scrape-storybook.mjs",
+    "build-references": "node build-references.mjs",
+    "diff-changelog": "node diff-changelog.mjs",
+    "upgrade": "node upgrade.mjs",
+    "test-scrape": "node scrape-storybook.mjs --pilot"
+  },
+  "dependencies": {
+    "playwright-core": "^1.46.0",
+    "turndown": "^7.2.0",
+    "turndown-plugin-gfm": "^1.0.2",
+    "p-limit": "^5.0.0",
+    "semver": "^7.6.0"
+  }
+}

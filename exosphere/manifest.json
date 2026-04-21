@@ -1,0 +1,18 @@
+{
+  "skill_name": "exosphere",
+  "skill_version": "1.0.0-alpha.2",
+  "exosphere_version": "7.8.3",
+  "built_at": "2026-04-21T00:00:00Z",
+  "built_from_sha": null,
+  "components_count": 80,
+  "source": {
+    "npm": "@boomi/exosphere",
+    "storybook": "https://exosphere.boomi.com",
+    "homepage": "https://exosphere.boomi.com/"
+  },
+  "framework_support": ["react", "next", "angular", "vue", "web-components"],
+  "license": "BSD-3-Clause",
+  "owner": "Boomi, LP",
+  "official": true,
+  "description": "Official Boomi Exosphere Claude skill. Machine-readable version + provenance metadata for the skill; human-readable log is in CHANGELOG.md."
+}

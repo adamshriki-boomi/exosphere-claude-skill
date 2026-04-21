@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>exosphere — Skill Description Optimization</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600&family=Lora:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Lora', Georgia, serif;
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 20px;
+            background: #faf9f5;
+            color: #141413;
+        }
+        h1 { font-family: 'Poppins', sans-serif; color: #141413; }
+        .explainer {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            border: 1px solid #e8e6dc;
+            color: #b0aea5;
+            font-size: 0.875rem;
+            line-height: 1.6;
+        }
+        .summary {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            border: 1px solid #e8e6dc;
+        }
+        .summary p { margin: 5px 0; }
+        .best { color: #788c5d; font-weight: bold; }
+        .table-container {
+            overflow-x: auto;
+            width: 100%;
+        }
+        table {
+            border-collapse: collapse;
+            background: white;
+            border: 1px solid #e8e6dc;
+            border-radius: 6px;
+            font-size: 12px;
+            min-width: 100%;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border: 1px solid #e8e6dc;
+            white-space: normal;
+            word-wrap: break-word;
+        }
+        th {
+            font-family: 'Poppins', sans-serif;
+            background: #141413;
+            color: #faf9f5;
+            font-weight: 500;
+        }
+        th.test-col {
+            background: #6a9bcc;
+        }
+        th.query-col { min-width: 200px; }
+        td.description {
+            font-family: monospace;
+            font-size: 11px;
+            word-wrap: break-word;
+            max-width: 400px;
+        }
+        td.result {
+            text-align: center;
+            font-size: 16px;
+            min-width: 40px;
+        }
+        td.test-result {
+            background: #f0f6fc;
+        }
+        .pass { color: #788c5d; }
+        .fail { color: #c44; }
+        .rate {
+            font-size: 9px;
+            color: #b0aea5;
+            display: block;
+        }
+        tr:hover { background: #faf9f5; }
+        .score {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 11px;
+        }
+        .score-good { background: #eef2e8; color: #788c5d; }
+        .score-ok { background: #fef3c7; color: #d97706; }
+        .score-bad { background: #fceaea; color: #c44; }
+        .train-label { color: #b0aea5; font-size: 10px; }
+        .test-label { color: #6a9bcc; font-size: 10px; font-weight: bold; }
+        .best-row { background: #f5f8f2; }
+        th.positive-col { border-bottom: 3px solid #788c5d; }
+        th.negative-col { border-bottom: 3px solid #c44; }
+        th.test-col.positive-col { border-bottom: 3px solid #788c5d; }
+        th.test-col.negative-col { border-bottom: 3px solid #c44; }
+        .legend { font-family: 'Poppins', sans-serif; display: flex; gap: 20px; margin-bottom: 10px; font-size: 13px; align-items: center; }
+        .legend-item { display: flex; align-items: center; gap: 6px; }
+        .legend-swatch { width: 16px; height: 16px; border-radius: 3px; display: inline-block; }
+        .swatch-positive { background: #141413; border-bottom: 3px solid #788c5d; }
+        .swatch-negative { background: #141413; border-bottom: 3px solid #c44; }
+        .swatch-test { background: #6a9bcc; }
+        .swatch-train { background: #141413; }
+    </style>
+</head>
+<body>
+    <h1>exosphere — Skill Description Optimization</h1>
+    <div class="explainer">
+        <strong>Optimizing your skill's description.</strong> This page updates automatically as Claude tests different versions of your skill's description. Each row is an iteration — a new description attempt. The columns show test queries: green checkmarks mean the skill triggered correctly (or correctly didn't trigger), red crosses mean it got it wrong. The "Train" score shows performance on queries used to improve the description; the "Test" score shows performance on held-out queries the optimizer hasn't seen. When it's done, Claude will apply the best-performing description to your skill.
+    </div>
+
+    <div class="summary">
+        <p><strong>Original:</strong> Official Boomi Exosphere design system skill. Use for any UI work in a Boomi product or any project that uses the Exosphere design system. MUST trigger on explicit mentions of `@boomi/exosphere`, `ExButton`/`ex-button`/`Ex*`/`ex-*`, Exosphere tokens (`--exo-*`), `exosphere.boomi.com` URLs, Boomi product UI features, Exosphere theming, design-system compliance reviews, token/a11y audits, picking the right component for a UX need, setting up Exosphere in a new React/Angular/Vue/Next app, and extending the system with custom components. ALSO trigger when a user is building UI inside a Boomi codebase even if they do not explicitly name Exosphere — in Boomi projects, Exosphere is the default design system and the skill should be consulted proactively rather than waiting to be invited.</p>
+        <p class="best"><strong>Best:</strong> Use this skill for any question or task involving Boomi&#x27;s Exosphere design system. This is the only skill that knows Exosphere — invoke it whenever you see:
+
+- Any identifier starting with `Ex` (e.g. ExButton, ExDialog, ExPill, ExWizard, ExTree, ExCarousel, ExRichTextEditor, ExLeftmenubar*, ExStructuredList*, ExToastController — 70+ components, including unfamiliar Ex* names).
+- Any `ex-*` custom element tag like `&lt;ex-button&gt;`, `&lt;ex-badge-group&gt;`, `&lt;ex-alert-banner&gt;`.
+- The package `@boomi/exosphere`, `--exo-*` CSS tokens, or `exosphere.boomi.com`.
+- UI work inside any Boomi product/codebase (Integration Designer, runtime UI, atom catalog, theming pages) — Exosphere is the default there, trigger even when not named.
+
+Covers: props, events, docs, examples, comparisons (&quot;X vs Y&quot;), loading/responsive/a11y behavior, framework setup (React, Next.js, Angular, Vue), tokens/theming, and picking the right component for a UX need.
+
+When in doubt about an Ex-prefixed name or a Boomi UI task, trigger.</p>
+        <p><strong>Best Score:</strong> 4/40 (test)</p>
+        <p><strong>Iterations:</strong> 3 | <strong>Train:</strong> 62 | <strong>Test:</strong> 40</p>
+    </div>
+
+    <div class="legend">
+        <span style="font-weight:600">Query columns:</span>
+        <span class="legend-item"><span class="legend-swatch swatch-positive"></span> Should trigger</span>
+        <span class="legend-item"><span class="legend-swatch swatch-negative"></span> Should NOT trigger</span>
+        <span class="legend-item"><span class="legend-swatch swatch-train"></span> Train</span>
+        <span class="legend-item"><span class="legend-swatch swatch-test"></span> Test</span>
+    </div>
+
+    <div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>Iter</th>
+                <th>Train</th>
+                <th>Test</th>
+                <th class="query-col">Description</th>
+                <th class="positive-col">docs for ExNestedCheckboxGroup</th>
+                <th class="positive-col">is there a way to make ExPill responsive</th>
+                <th class="positive-col">give me a vue template using &lt;ex-badge-group&gt;</th>
+                <th class="positive-col">ExBreadcrumb vs ExTab — when do I pick which</th>
+                <th class="positive-col">i need a ExSelect example</th>
+                <th class="positive-col">is ExAccordionItem the right choice for one accordion section</th>
+                <th class="positive-col">what events does ExWizardItem emit</th>
+                <th class="positive-col">is ExWizard the right choice for multi-step onboarding flow</th>
+                <th class="positive-col">i want to add a data grid with sorting/filtering/pagination for the user admin screen in our vue app. what should i use</th>
+                <th class="positive-col">docs for ExFilter</th>
+                <th class="positive-col">loading state for ExLoader?</th>
+                <th class="positive-col">what events does ExLeftmenubarCategoryTitle emit</th>
+                <th class="positive-col">Is there a way to use @boomi/exosphere with Next.js 14 App Router? Keep getting &#x27;window is not defined&#x27; errors when I try to render ExDialog server-side</th>
+                <th class="positive-col">quick — what&#x27;s the right way to render &lt;ex-rich-input&gt; in angular</th>
+                <th class="positive-col">ExBadge vs ExPill — when do I pick which</th>
+                <th class="positive-col">aria-label pattern for ExContainer</th>
+                <th class="positive-col">ExCheckboxGroup vs ExRadioGroup — when do I pick which</th>
+                <th class="positive-col">loading state for ExCard?</th>
+                <th class="positive-col">is there a way to make ExRadio responsive</th>
+                <th class="positive-col">I need to add a color picker to the integration theming page. Users will pick a custom brand color. Does our design system have that?</th>
+                <th class="positive-col">give me a vue template using &lt;ex-checkbox&gt;</th>
+                <th class="positive-col">i need a ExLeftmenubarAdjustable that adjustable left menubar</th>
+                <th class="positive-col">Angular 17 standalone component that renders &lt;ex-button&gt; is throwing &#x27;ex-button is not a known element&#x27;. What am I missing?</th>
+                <th class="positive-col">i need a ExCarousel that horizontal image carousel</th>
+                <th class="positive-col">is ExCarouselItem the right choice for a single slide in the carousel</th>
+                <th class="positive-col">we just got a design mock from Sarah on the UX team for the new atom catalog page — it&#x27;s a bunch of cards with status pills and an &#x27;add&#x27; FAB. Need to implement in our React app (yes it&#x27;s a Boomi product).</th>
+                <th class="positive-col">quick — what&#x27;s the right way to render &lt;ex-leftmenubar-item&gt; in angular</th>
+                <th class="positive-col">how do i show an exosphere toast programmatically with ToastController</th>
+                <th class="positive-col">show me the props for ExDropdown</th>
+                <th class="positive-col">I&#x27;m building a new integration detail page in the Boomi Integration Designer and I need the top header with breadcrumbs like &#x27;Integrations / Salesforce to NetSuite&#x27; plus a primary action button to run it. Can you give me the React code?</th>
+                <th class="positive-col">ExRichTextEditor vs ExTextarea — when do I pick which</th>
+                <th class="positive-col">i need a ExMenu example</th>
+                <th class="positive-col">loading state for ExChart?</th>
+                <th class="positive-col">docs for ExTree</th>
+                <th class="positive-col">ExTabItem vs another Exosphere component — when do I pick which</th>
+                <th class="positive-col">show me the props for ExRadioGroup</th>
+                <th class="positive-col">how do I use ExPanel in react</th>
+                <th class="positive-col">is there a way to make ExStructuredListBody responsive</th>
+                <th class="positive-col">show me the props for ExSegmentedControls</th>
+                <th class="positive-col">how do I use ExFileUploader in react</th>
+                <th class="positive-col">can i style ExDatePicker with my own CSS or does it take tokens only</th>
+                <th class="positive-col">loading state for ExStructuredListSubheader?</th>
+                <th class="positive-col">show me the props for ExIcon</th>
+                <th class="positive-col">design system question — for a &#x27;Are you sure?&#x27; destructive confirmation modal what flavor/type combo should the danger button use? we&#x27;re using Exosphere</th>
+                <th class="positive-col">can i style ExPagination with my own CSS or does it take tokens only</th>
+                <th class="positive-col">show me the props for ExTooltip</th>
+                <th class="positive-col">give me a vue template using &lt;ex-button&gt;</th>
+                <th class="positive-col">what events does ExTile emit</th>
+                <th class="positive-col">how do I use ExLink in react</th>
+                <th class="positive-col">quick — what&#x27;s the right way to render &lt;ex-rich-input-suggestion&gt; in angular</th>
+                <th class="positive-col">how do I use ExTimeRangePicker in react</th>
+                <th class="positive-col">quick — what&#x27;s the right way to render &lt;ex-alert-banner&gt; in angular</th>
+                <th class="positive-col">how do I use ExEmptyState in react</th>
+                <th class="positive-col">ExInput vs ExRichInput — when do I pick which</th>
+                <th class="positive-col">refactor this component to remove all the hex colors and replace them with CSS custom properties
+
+```tsx
+&lt;div style={{background: &#x27;#f7f9fc&#x27;, color: &#x27;#1a1a1a&#x27;, padding: &#x27;16px&#x27;}}&gt;Content&lt;/div&gt;
+```
+
+it&#x27;s in the Boomi runtime UI btw</th>
+                <th class="positive-col">i need a ExStructuredListCol that single column</th>
+                <th class="negative-col">I&#x27;m building a small internal tool with Chakra UI — need a form with 3 text inputs and a submit button. Can you write it?</th>
+                <th class="negative-col">our marketing site built with Next.js needs a hero section with an email signup form. can you write the components? we use Tailwind and shadcn/ui</th>
+                <th class="negative-col">best practices for React error boundaries in production apps — we&#x27;re on React 18</th>
+                <th class="negative-col">how do I center a div with flexbox</th>
+                <th class="negative-col">what&#x27;s the difference between Lit and LitElement in web components? I&#x27;m trying to understand reactive properties</th>
+                <th class="negative-col">how do I configure custom web components in a Vue 3 project without getting console warnings</th>
+                <th class="test-col positive-col">show me the props for ExFooter</th>
+                <th class="test-col positive-col">what does --exo-color-background-danger-strong resolve to in dark mode</th>
+                <th class="test-col positive-col">how do I disable ExLeftMenubarTableCol</th>
+                <th class="test-col positive-col">hey so the settings page in our atom manager has this ugly gray button that doesnt match the rest of the app — can you look at src/components/atom-settings/SaveButton.tsx and fix the styling to use the design system tokens like the other buttons do?</th>
+                <th class="test-col positive-col">i need a ExAccordion that FAQ-style expandable sections</th>
+                <th class="test-col positive-col">what events does ExTextarea emit</th>
+                <th class="test-col positive-col">is ExPageHeader the right choice for standard page header with title + actions</th>
+                <th class="test-col positive-col">loading state for ExToggle?</th>
+                <th class="test-col positive-col">can i style ExLeftMenubar with my own CSS or does it take tokens only</th>
+                <th class="test-col positive-col">quick — what&#x27;s the right way to render &lt;ex-alert-popup&gt; in angular</th>
+                <th class="test-col positive-col">aria-label pattern for ExLeftmenubarLink</th>
+                <th class="test-col positive-col">aria-label pattern for ExLeftmenubarDivider</th>
+                <th class="test-col positive-col">how do I disable ExDialog</th>
+                <th class="test-col positive-col">ExCombobox vs ExSelect — when do I pick which</th>
+                <th class="test-col positive-col">show me the props for ExFooterLinkGroup</th>
+                <th class="test-col positive-col">quick — what&#x27;s the right way to render &lt;ex-menu-item&gt; in angular</th>
+                <th class="test-col positive-col">aria-label pattern for ExMenuItemGroup</th>
+                <th class="test-col positive-col">ExResizeHandle vs ExSideDrawer — when do I pick which</th>
+                <th class="test-col positive-col">give me a vue template using &lt;ex-structured-list-col-group&gt;</th>
+                <th class="test-col positive-col">aria-label pattern for ExNavigationDrawer</th>
+                <th class="test-col positive-col">i need a ExTab example</th>
+                <th class="test-col positive-col">quick — what&#x27;s the right way to render &lt;ex-json-editor&gt; in angular</th>
+                <th class="test-col positive-col">show me the props for ExStructuredList</th>
+                <th class="test-col positive-col">is ExSegmentedControl the right choice for single segment</th>
+                <th class="test-col positive-col">is there a way to make ExAlertToast responsive</th>
+                <th class="test-col positive-col">my teammate keeps using raw &lt;button&gt; tags in her PRs instead of the ExButton wrapper. Can you add a CI check or lint rule that catches this?</th>
+                <th class="test-col positive-col">quick — what&#x27;s the right way to render &lt;ex-pill-group&gt; in angular</th>
+                <th class="test-col positive-col">is there a way to make ExSideDrawer responsive</th>
+                <th class="test-col positive-col">show me the props for ExLabel</th>
+                <th class="test-col positive-col">loading state for ExLeftMenubarTableRow?</th>
+                <th class="test-col positive-col">can i style ExTable with my own CSS or does it take tokens only</th>
+                <th class="test-col positive-col">can i style ExFooterLink with my own CSS or does it take tokens only</th>
+                <th class="test-col positive-col">is there a way to make ExBreadcrumbItem responsive</th>
+                <th class="test-col positive-col">how do I use ExAvatar in react</th>
+                <th class="test-col positive-col">how do I use ExLeftmenubarDropdown in react</th>
+                <th class="test-col positive-col">what events does ExStructuredListRow emit</th>
+                <th class="test-col positive-col">show me the props for ExIconButton</th>
+                <th class="test-col negative-col">migrate this Material UI DataGrid to Ant Design&#x27;s Table — here&#x27;s the current implementation</th>
+                <th class="test-col negative-col">write me a SQL query that joins users and orders tables</th>
+                <th class="test-col negative-col">explain the difference between `role=&quot;dialog&quot;` and `aria-modal` for accessibility</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="">
+                <td>1</td>
+                <td><span class="score score-bad">32/186</span></td>
+                <td><span class="score score-bad">12/120</span></td>
+                <td class="description">Official Boomi Exosphere design system skill. Use for any UI work in a Boomi product or any project that uses the Exosphere design system. MUST trigger on explicit mentions of `@boomi/exosphere`, `ExButton`/`ex-button`/`Ex*`/`ex-*`, Exosphere tokens (`--exo-*`), `exosphere.boomi.com` URLs, Boomi product UI features, Exosphere theming, design-system compliance reviews, token/a11y audits, picking the right component for a UX need, setting up Exosphere in a new React/Angular/Vue/Next app, and extending the system with custom components. ALSO trigger when a user is building UI inside a Boomi codebase even if they do not explicitly name Exosphere — in Boomi projects, Exosphere is the default design system and the skill should be consulted proactively rather than waiting to be invited.</td>
+                <td class="result fail">✗<span class="rate">1/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">1/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">1/3</span></td>
+                <td class="result fail">✗<span class="rate">1/3</span></td>
+                <td class="result fail">✗<span class="rate">1/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">1/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">1/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">1/3</span></td>
+                <td class="result fail">✗<span class="rate">1/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">1/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">1/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">1/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">1/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">1/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">1/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">1/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">1/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result pass">✓<span class="rate">0/3</span></td>
+                <td class="result test-result pass">✓<span class="rate">0/3</span></td>
+                <td class="result test-result pass">✓<span class="rate">0/3</span></td>
+            </tr>
+            <tr class="">
+                <td>2</td>
+                <td><span class="score score-bad">21/186</span></td>
+                <td><span class="score score-bad">13/120</span></td>
+                <td class="description">Use this skill whenever the user mentions, asks about, or works with ANY Exosphere design-system element. Trigger on:
+
+- ANY component name starting with `Ex` (ExButton, ExPill, ExDialog, ExWizard, ExSelect, ExTree, ExFilter, ExCarousel, ExTile, ExRich*, ExLeftmenubar*, ExStructuredList*, etc. — 70+ components; trigger even on unfamiliar Ex* names).
+- ANY `ex-*` web-component tag (`&lt;ex-button&gt;`, `&lt;ex-badge-group&gt;`, etc.).
+- `@boomi/exosphere`, `--exo-*` tokens, `exosphere.boomi.com`, ExToastController, AI/Discover kits.
+- Questions about props, events, docs, examples, loading/responsive/a11y behavior, or &quot;X vs Y — when do I pick which&quot; comparisons for Ex* names.
+- Setup in React, Next.js, Angular, or Vue involving Exosphere.
+- ANY UI work inside a Boomi product or codebase (Integration Designer, atom catalog, runtime UI) — Exosphere is the default; trigger proactively even if not named.
+
+Err strongly on the side of triggering for any Ex-prefixed identifier or Boomi UI task.</td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">1/3</span></td>
+                <td class="result fail">✗<span class="rate">1/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">1/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">1/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">1/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">1/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">1/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result pass">✓<span class="rate">0/3</span></td>
+                <td class="result test-result pass">✓<span class="rate">0/3</span></td>
+                <td class="result test-result pass">✓<span class="rate">0/3</span></td>
+            </tr>
+            <tr class="best-row">
+                <td>3</td>
+                <td><span class="score score-bad">35/186</span></td>
+                <td><span class="score score-bad">21/120</span></td>
+                <td class="description">Use this skill for any question or task involving Boomi&#x27;s Exosphere design system. This is the only skill that knows Exosphere — invoke it whenever you see:
+
+- Any identifier starting with `Ex` (e.g. ExButton, ExDialog, ExPill, ExWizard, ExTree, ExCarousel, ExRichTextEditor, ExLeftmenubar*, ExStructuredList*, ExToastController — 70+ components, including unfamiliar Ex* names).
+- Any `ex-*` custom element tag like `&lt;ex-button&gt;`, `&lt;ex-badge-group&gt;`, `&lt;ex-alert-banner&gt;`.
+- The package `@boomi/exosphere`, `--exo-*` CSS tokens, or `exosphere.boomi.com`.
+- UI work inside any Boomi product/codebase (Integration Designer, runtime UI, atom catalog, theming pages) — Exosphere is the default there, trigger even when not named.
+
+Covers: props, events, docs, examples, comparisons (&quot;X vs Y&quot;), loading/responsive/a11y behavior, framework setup (React, Next.js, Angular, Vue), tokens/theming, and picking the right component for a UX need.
+
+When in doubt about an Ex-prefixed name or a Boomi UI task, trigger.</td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">1/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">1/3</span></td>
+                <td class="result fail">✗<span class="rate">1/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">1/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">1/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">1/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">1/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">1/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">2/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">1/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">1/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">1/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">1/3</span></td>
+                <td class="result fail">✗<span class="rate">1/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">1/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">1/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">1/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">1/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">1/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">1/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">1/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result pass">✓<span class="rate">2/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">1/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">1/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">1/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">1/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">1/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result pass">✓<span class="rate">0/3</span></td>
+                <td class="result test-result pass">✓<span class="rate">0/3</span></td>
+                <td class="result test-result pass">✓<span class="rate">0/3</span></td>
+            </tr>
+        </tbody>
+    </table>
+    </div>
+
+</body>
+</html>

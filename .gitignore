@@ -1,0 +1,20 @@
+# Claude Code session context (not part of the repo)
+.claude/
+
+# Build-tools intermediate output
+exosphere/build-tools/node_modules/
+exosphere/build-tools/scraped/
+exosphere/build-tools/*.log
+
+# Eval / optimization workspace — evidence is preserved under docs/evidence/
+exosphere-workspace/
+_build-tools-tmp/
+
+# OS / editor noise
+.DS_Store
+*.swp
+*.swo
+Thumbs.db
+
+# Logs
+*.log

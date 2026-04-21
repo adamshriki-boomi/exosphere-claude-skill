@@ -1,0 +1,53 @@
+---
+id: "content-content-patterns-tabs--overview"
+title: "Content/Content Patterns/Tabs"
+name: "Overview"
+source_url: "https://exosphere.boomi.com/iframe.html?id=content-content-patterns-tabs--overview&viewMode=docs"
+scraped_at: "2026-04-21T08:42:56.027Z"
+built_at: "2026-04-21T08:48:27.308Z"
+---
+# Tabs
+
+#### Purpose
+
+Textual design element that organizes content into groups that are related.
+
+#### Do use 1-3 words to reduce clutter
+
+![Example showing 1-3 word tabs to reduce clutter](https://exosphere.boomi.com/assets/Tab1-92cb3194.png)
+
+#### Function
+
+Helps users switch between different views of the same information.
+
+#### General Use
+
+For switching between different views of the same data set such as colors or timeframes
+
+#### Details
+
+-   Limit the words in a tab to 1-3.
+-   Group tabs similar in nature.
+-   Do not use ALL CAPS.
+-   Tabs should be used to navigate the context of a page, not to navigate between pages
+-   Each tab does not need to have its own heading unless there is a clear reason (the tab name typically is enough).
+-   Tab headings should use headline-style capitalization (title case).
+-   Always spell out words for tab names (for example: Information rather than Info).
+
+## Examples
+
+#### Do group words similar in nature
+
+![Example showing grouping of similar tab words](https://exosphere.boomi.com/assets/Tab2-011d8d52.png)
+
+#### Do use title case (headline style) for more than 1 word
+
+![Example showing title case for multi-word tabs](data:image/png;base64,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)
+
+#### Do write tab copy that is longer than a few words in simple language starting with action word
+
+![Example showing longer tab copy with action words](https://exosphere.boomi.com/assets/Tab4-6eb9a66c.png)
+
+#### Do write single word tabs in title case to be consistent with others
+
+![Example showing single word tabs in title case](https://exosphere.boomi.com/assets/Tab5-043471fd.png)

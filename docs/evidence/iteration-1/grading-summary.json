@@ -1,0 +1,82 @@
+{
+  "evals": [
+    {
+      "name": "angular-users-table",
+      "runs": {
+        "with_skill": {
+          "passed": 8,
+          "total": 8
+        },
+        "without_skill": {
+          "passed": 2,
+          "total": 8
+        }
+      }
+    },
+    {
+      "name": "next-dashboard-shell",
+      "runs": {
+        "with_skill": {
+          "passed": 9,
+          "total": 9
+        },
+        "without_skill": {
+          "passed": 3,
+          "total": 9
+        }
+      }
+    },
+    {
+      "name": "react-install-plus-dialog",
+      "runs": {
+        "with_skill": {
+          "passed": 10,
+          "total": 10
+        },
+        "without_skill": {
+          "passed": 10,
+          "total": 10
+        }
+      }
+    },
+    {
+      "name": "suggest-ask-flag-radar-chart",
+      "runs": {
+        "with_skill": {
+          "passed": 5,
+          "total": 5
+        },
+        "without_skill": {
+          "passed": 3,
+          "total": 5
+        }
+      }
+    },
+    {
+      "name": "token-compliance-refactor",
+      "runs": {
+        "with_skill": {
+          "passed": 8,
+          "total": 8
+        },
+        "without_skill": {
+          "passed": 4,
+          "total": 8
+        }
+      }
+    },
+    {
+      "name": "vue-profile-form",
+      "runs": {
+        "with_skill": {
+          "passed": 9,
+          "total": 9
+        },
+        "without_skill": {
+          "passed": 1,
+          "total": 9
+        }
+      }
+    }
+  ]
+}

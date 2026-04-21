@@ -1,0 +1,38 @@
+<!--
+  Plain HTML + Exosphere via unpkg CDN.
+  Always pin the version — never use @latest in production.
+-->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Exosphere — plain HTML starter</title>
+    <link rel="stylesheet" href="https://unpkg.com/@boomi/exosphere@7.8.3/dist/styles.css">
+    <!-- If you render ExTable:
+    <link rel="stylesheet" href="https://unpkg.com/@boomi/exosphere@7.8.3/dist/exo-table-styles.css">
+    -->
+    <script type="module" src="https://unpkg.com/@boomi/exosphere@7.8.3/dist/index.mjs"></script>
+  </head>
+  <body>
+    <div style="padding: var(--exo-spacing-large);">
+      <h1 style="font-family: var(--exo-font-brand); color: var(--exo-color-font);">
+        Hello from Exosphere
+      </h1>
+
+      <ex-button type="primary" flavor="branded" id="hello">
+        Click me
+      </ex-button>
+
+      <ex-alert-banner type="info" variant="dismissable" style="margin-top: var(--exo-spacing-medium);">
+        Exosphere loaded successfully.
+      </ex-alert-banner>
+    </div>
+
+    <script type="module">
+      document.getElementById("hello").addEventListener("click", () => {
+        alert("Exosphere web components are wired up.");
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,66 @@
+{
+  "description": "Programmatic assertions for grading each eval's outputs. The grader walks every file in the output dir and applies the matching rules. Each rule is (check, target): check is 'has'|'not_has'|'count_zero'|'count_at_least_1'; target is either a substring, a regex (/.../), or a filename glob.",
+  "assertions": {
+    "react-install-plus-dialog": [
+      { "text": "Imports ExButton from @boomi/exosphere", "check": "grep_any", "pattern": "import[^;]*ExButton[^;]*from +[\"']@boomi/exosphere[\"']", "files": "**/*.{tsx,ts,jsx,js}" },
+      { "text": "Imports ExDialog from @boomi/exosphere", "check": "grep_any", "pattern": "import[^;]*ExDialog[^;]*from +[\"']@boomi/exosphere[\"']", "files": "**/*.{tsx,ts,jsx,js}" },
+      { "text": "Imports @boomi/exosphere/dist/styles.css in an entry file", "check": "grep_any", "pattern": "[\"']@boomi/exosphere/dist/styles\\.css[\"']", "files": "**/*.{tsx,ts,jsx,js}" },
+      { "text": "Uses <ExDialog> element in JSX", "check": "grep_any", "pattern": "<ExDialog\\b", "files": "**/*.{tsx,jsx}" },
+      { "text": "Uses <ExButton> element in JSX", "check": "grep_any", "pattern": "<ExButton\\b", "files": "**/*.{tsx,jsx}" },
+      { "text": "No raw <button> tags", "check": "grep_none", "pattern": "<button[\\s>]", "files": "**/*.{tsx,jsx}" },
+      { "text": "No raw <dialog> tags", "check": "grep_none", "pattern": "<dialog[\\s>]", "files": "**/*.{tsx,jsx}" },
+      { "text": "No hex color literals", "check": "grep_none", "pattern": "#[0-9a-fA-F]{3,8}\\b", "files": "**/*.{tsx,ts,jsx,js,css,scss}" },
+      { "text": "README/explainer mentions install command", "check": "grep_any", "pattern": "npm (i|install) @boomi/exosphere", "files": "**/*.md" },
+      { "text": "Mentions Jest transformIgnorePatterns OR explicitly notes Vitest/no-Jest", "check": "grep_any", "pattern": "transformIgnorePatterns|Vitest|vitest|no Jest|not using Jest", "files": "**/*.md" }
+    ],
+    "angular-users-table": [
+      { "text": "Uses CUSTOM_ELEMENTS_SCHEMA", "check": "grep_any", "pattern": "CUSTOM_ELEMENTS_SCHEMA", "files": "**/*.{ts,html}" },
+      { "text": "Uses <ex-table> OR <ex-structured-list>", "check": "grep_any", "pattern": "<ex-(table|structured-list)\\b", "files": "**/*.{ts,html}" },
+      { "text": "Uses <ex-icon-button> or <ex-button> for row actions", "check": "grep_any", "pattern": "<ex-(icon-)?button\\b", "files": "**/*.{ts,html}" },
+      { "text": "No raw <button> tags", "check": "grep_none", "pattern": "<button[\\s>]", "files": "**/*.{ts,html}" },
+      { "text": "Imports @boomi/exosphere/dist/styles.css", "check": "grep_any", "pattern": "@boomi/exosphere/dist/styles\\.css", "files": "**/*.{ts,json,html,css,scss}" },
+      { "text": "Side-effect imports @boomi/exosphere (custom element register)", "check": "grep_any", "pattern": "import +[\"']@boomi/exosphere[\"']", "files": "**/*.{ts,js}" },
+      { "text": "Imports exo-table-styles.css (required for ExTable)", "check": "grep_any", "pattern": "exo-table-styles\\.css", "files": "**/*.{ts,json,html,css,scss,md}" },
+      { "text": "No hex color literals", "check": "grep_none", "pattern": "#[0-9a-fA-F]{3,8}\\b", "files": "**/*.{ts,html,css,scss}" }
+    ],
+    "vue-profile-form": [
+      { "text": "Uses <ex-input> for text fields", "check": "grep_any", "pattern": "<ex-input\\b", "files": "**/*.vue" },
+      { "text": "Uses <ex-combobox> for country (many options)", "check": "grep_any", "pattern": "<ex-combobox\\b", "files": "**/*.vue" },
+      { "text": "Does NOT use <ex-select> for country", "check": "grep_none", "pattern": "<ex-select[^>]*country", "files": "**/*.vue" },
+      { "text": "Uses <ex-date-picker>", "check": "grep_any", "pattern": "<ex-date-picker\\b", "files": "**/*.vue" },
+      { "text": "Uses <ex-toggle> for the updates checkbox", "check": "grep_any", "pattern": "<ex-toggle\\b", "files": "**/*.vue" },
+      { "text": "Uses <ex-button>", "check": "grep_any", "pattern": "<ex-button\\b", "files": "**/*.vue" },
+      { "text": "Configures isCustomElement for Vue compiler", "check": "grep_any", "pattern": "isCustomElement", "files": "**/*.{ts,js,vue,md}" },
+      { "text": "Imports @boomi/exosphere/dist/styles.css", "check": "grep_any", "pattern": "@boomi/exosphere/dist/styles\\.css", "files": "**/*.{ts,js,vue,md}" },
+      { "text": "No hex color literals", "check": "grep_none", "pattern": "#[0-9a-fA-F]{3,8}\\b", "files": "**/*.{ts,js,vue,css,scss}" }
+    ],
+    "next-dashboard-shell": [
+      { "text": "At least one file with 'use client' directive", "check": "grep_any", "pattern": "['\"]use client['\"]", "files": "**/*.{tsx,jsx}" },
+      { "text": "Uses ExLeftMenubar OR ExNavigationDrawer for left nav", "check": "grep_any", "pattern": "ExLeftMenubar|ExNavigationDrawer", "files": "**/*.{tsx,jsx}" },
+      { "text": "Uses ExPageHeader", "check": "grep_any", "pattern": "ExPageHeader", "files": "**/*.{tsx,jsx}" },
+      { "text": "Uses ExBreadcrumb + ExBreadcrumbItem", "check": "grep_any", "pattern": "ExBreadcrumbItem", "files": "**/*.{tsx,jsx}" },
+      { "text": "Uses ExButton for the primary action", "check": "grep_any", "pattern": "ExButton", "files": "**/*.{tsx,jsx}" },
+      { "text": "Uses ExMenu + ExMenuItem for overflow", "check": "grep_any", "pattern": "ExMenuItem", "files": "**/*.{tsx,jsx}" },
+      { "text": "layout.tsx imports @boomi/exosphere/dist/styles.css", "check": "grep_any", "pattern": "@boomi/exosphere/dist/styles\\.css", "files": "**/layout.tsx" },
+      { "text": "No raw <button> tags", "check": "grep_none", "pattern": "<button[\\s>]", "files": "**/*.{tsx,jsx}" },
+      { "text": "No hex color literals", "check": "grep_none", "pattern": "#[0-9a-fA-F]{3,8}\\b", "files": "**/*.{tsx,ts,jsx,js,css,scss}" }
+    ],
+    "suggest-ask-flag-radar-chart": [
+      { "text": "Response suggests ExChart first", "check": "grep_any", "pattern": "ExChart|ex-chart", "files": "**/*.md" },
+      { "text": "Response mentions radar is not supported / not in Exosphere", "check": "grep_any", "pattern": "(radar.*not|not.*radar|doesn't (ship|support).*radar|no.*radar|unsupported)", "files": "**/*.md" },
+      { "text": "Response explicitly asks user for approval before going custom", "check": "grep_any", "pattern": "(proceed\\?|approve|shall I|would you like|should I|would you (want|like|prefer).*(build|custom)|do you want.*custom|confirm.*custom)", "files": "**/*.md" },
+      { "text": "Response does NOT include a built radar chart component file", "check": "file_not_exists", "pattern": "**/*[Rr]adar*.{tsx,jsx,ts,js}" },
+      { "text": "Response mentions / alludes to the custom-component banner / flag", "check": "grep_any", "pattern": "(custom.+extension|flag|banner|EXOSPHERE-CUSTOM)", "files": "**/*.md" }
+    ],
+    "token-compliance-refactor": [
+      { "text": "No hex color literals in refactored SaveBar", "check": "grep_none", "pattern": "#[0-9a-fA-F]{3,8}\\b", "files": "**/SaveBar.{tsx,jsx,ts,js}" },
+      { "text": "Uses --exo-color-* semantic tokens", "check": "grep_any", "pattern": "--exo-color-", "files": "**/SaveBar.{tsx,jsx,ts,js}" },
+      { "text": "Uses --exo-spacing-* tokens", "check": "grep_any", "pattern": "--exo-spacing-", "files": "**/SaveBar.{tsx,jsx,ts,js}" },
+      { "text": "Uses --exo-radius-* tokens (or removes the border-radius in favor of component default)", "check": "grep_any", "pattern": "--exo-radius-|ExButton", "files": "**/SaveBar.{tsx,jsx,ts,js}" },
+      { "text": "Uses ExButton instead of raw <button>", "check": "grep_any", "pattern": "ExButton", "files": "**/SaveBar.{tsx,jsx,ts,js}" },
+      { "text": "No raw <button> tags", "check": "grep_none", "pattern": "<button[\\s>]", "files": "**/SaveBar.{tsx,jsx,ts,js}" },
+      { "text": "Imports ExButton from @boomi/exosphere", "check": "grep_any", "pattern": "import[^;]*ExButton[^;]*@boomi/exosphere", "files": "**/SaveBar.{tsx,jsx,ts,js}" },
+      { "text": "No px literals beyond 1px borders", "check": "grep_none", "pattern": "(?<![\\w-])(?!1px\\b)[2-9][0-9]*px\\b|(?<![\\w-])[1-9][0-9]+px\\b", "files": "**/SaveBar.{tsx,jsx,ts,js}" }
+    ]
+  }
+}

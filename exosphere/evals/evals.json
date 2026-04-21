@@ -1,0 +1,48 @@
+{
+  "skill_name": "exosphere",
+  "description": "Test prompts spanning install, all four frameworks, the suggest-ask-flag custom flow, and token compliance. Run with skill-creator's eval harness.",
+  "evals": [
+    {
+      "id": 1,
+      "name": "react-install-plus-dialog",
+      "prompt": "I'm starting a fresh Vite + React + TypeScript project and I want to use the Boomi Exosphere design system. Walk me through installing it, and then show me a primary button that opens a confirmation dialog when clicked. The dialog should have 'Confirm delete' as the header, body text 'Are you sure you want to delete this?', and OK / Cancel buttons. Use the current Exosphere recommendations.",
+      "expected_output": "Installs @boomi/exosphere, imports dist/styles.css in main.tsx, uses ExButton + ExDialog (not <button>/<dialog>), wires dialog open state with ExDialog's open/onOpenChange (not onClick/onClose), references ButtonType/ButtonFlavor enums appropriately. Does NOT use hex colors.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "angular-users-table",
+      "prompt": "I'm building a users admin page in an Angular 17 app (standalone components). The page should show a sortable, paginated table of users with columns for Name, Email, Role, and an actions column with an edit button per row. It should use Exosphere components. Please give me the full component code.",
+      "expected_output": "Uses ExTable (web-component form <ex-table> in Angular template) or ExStructuredList, configures CUSTOM_ELEMENTS_SCHEMA in the standalone component, imports '@boomi/exosphere/dist/styles.css' and exo-table-styles.css. Uses <ex-icon-button> for row actions, not raw <button>. Wires column defs + row data via property binding. Mentions NgZone for heavy-grid performance. No hex colors.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "name": "vue-profile-form",
+      "prompt": "I have a Vue 3 + Vite app and I need a profile editing form. Fields: first name (text), last name (text), country (dropdown with ~200 countries), birthday (date), job title (text), and 'email me about product updates' (toggle). Plus a Save button. Use Exosphere. Show me the component.",
+      "expected_output": "Uses ex-input (or ExInput-equivalent) for text fields, ex-combobox for country (not ex-select — too many options), ex-date-picker, ex-toggle, ex-button. Configures isCustomElement either in vite.config.ts or via app.config. Imports styles.css once. Uses .prop bindings for non-string values. No hex colors. Handles events via @value-change / @input, not @click for form inputs.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "name": "next-dashboard-shell",
+      "prompt": "I'm working on a Next.js 14 App Router dashboard. I need a shell layout: left navigation drawer with items for Home, Integrations, Runtime, Settings, then a top page header with breadcrumbs (Home > Integrations > My Integration) + a right-aligned primary action button 'New Integration' and an overflow menu with Import / Export. Content area below. All using Exosphere.",
+      "expected_output": "Uses ExLeftMenubar (or ExNavigationDrawer) with its Ex*Item children, ExPageHeader with ExBreadcrumb + ExBreadcrumbItem, ExButton for the primary action, ExIconButton + ExMenu/ExMenuItem for the overflow. Every file using Ex* components has 'use client' at the top. Imports @boomi/exosphere/dist/styles.css in app/layout.tsx. No hex colors.",
+      "files": []
+    },
+    {
+      "id": 5,
+      "name": "suggest-ask-flag-radar-chart",
+      "prompt": "I'd like to add a radar chart to our metrics dashboard. We're using Exosphere in React. Can you build it?",
+      "expected_output": "Walks the suggest-ask-flag flow: first checks whether ExChart supports radar (it does not in 7.8.3), says so, suggests closest alternatives (e.g., 'ExChart supports bar/line/area/donut — would any of those work, or do you specifically need the radar shape?'). Does NOT immediately jump to a custom component. Only after user confirms insufficiency does it ask for approval to build a custom, and if approved, uses the custom-component-banner template and notes that it will also record in EXOSPHERE-CUSTOM.md.",
+      "files": []
+    },
+    {
+      "id": 6,
+      "name": "token-compliance-refactor",
+      "prompt": "Here's a React component I wrote. Please refactor it to use Exosphere tokens instead of hex colors and pixel values — and swap any raw HTML elements for the right Exosphere component.\n\n```tsx\nexport function SaveBar({ onSave }: { onSave: () => void }) {\n  return (\n    <div style={{ display: 'flex', padding: '16px', background: '#f7f9fc', borderTop: '1px solid #d0d7e2', gap: '12px', justifyContent: 'flex-end' }}>\n      <button onClick={() => history.back()} style={{ padding: '8px 16px', background: 'white', border: '1px solid #d0d7e2', borderRadius: '4px', color: '#1a1a1a' }}>Cancel</button>\n      <button onClick={onSave} style={{ padding: '8px 16px', background: '#072b55', border: 'none', borderRadius: '4px', color: 'white' }}>Save</button>\n    </div>\n  );\n}\n```",
+      "expected_output": "Replaces the two <button>s with ExButton. Replaces inline hex values (#f7f9fc, #d0d7e2, #1a1a1a, #072b55, white) with --exo-color-* semantic tokens. Replaces px values (16px, 12px, 8px, 4px, 1px) with --exo-spacing-standard / --exo-spacing-small / --exo-spacing-x-small / --exo-radius-standard / 1px (allowed). Keeps the flex layout structure. Imports ExButton from @boomi/exosphere. No raw hex/px in output (except 1px borders which are acceptable).",
+      "files": []
+    }
+  ]
+}
