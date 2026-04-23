@@ -22,7 +22,24 @@
 //      literal — the specific shape of the false-positive that motivated
 //      this script.
 //
-// Exits 0 if at least one entry file contains BOTH imports. Exits 1 otherwise.
+// Indirection (added in alpha.6): the two imports don't have to be direct
+// statements in the entry file. Exosphere's own next.md describes a Recipe B
+// pattern that moves `icon.js` into a client-only Providers wrapper; the
+// common Tailwind+Exosphere setup pulls `styles.css` in via CSS @import.
+// Both patterns are now recognized:
+//   - styles.css: if the entry imports a local CSS file (e.g. `./globals.css`),
+//     follow it one level and accept any `@import "@boomi/exosphere/dist/styles.css"`
+//     (package-name, versioned, or relative node_modules path all count).
+//   - icon.js: if the entry imports a local JS/TS module (relative path or
+//     `@/...` → `src/` alias), follow it one level and accept when that module
+//     begins with `'use client'` AND contains either a top-level static
+//     `import "@boomi/exosphere/dist/icon.js"` or a dynamic
+//     `import("@boomi/exosphere/dist/icon.js")` anywhere in its body. The
+//     `'use client'` directive is load-bearing: without it, the same imports
+//     would execute server-side and crash on `customElements is not defined`.
+//
+// Exits 0 if at least one entry file satisfies BOTH imports (direct or via
+// one level of indirection). Exits 1 otherwise.
 //
 // Usage:
 //   node verify-root-imports.mjs [project_root]
@@ -118,6 +135,112 @@ function buildLexerMask(text) {
   return mask;
 }
 
+// ——— indirection helpers (alpha.6) ———
+// Resolve a JS/TS module specifier from an entry file to an absolute path.
+// Returns null for npm packages. Handles relative paths (`./x`, `../x`) and
+// the default Next.js `@/x` alias (tries `<root>/src/x` first, falls back to
+// `<root>/x` to cover projects without a `src/` layout).
+function existsAnyJsExtension(base) {
+  if (fs.existsSync(base) && fs.statSync(base).isFile()) return base;
+  for (const ext of ['.tsx', '.ts', '.jsx', '.js']) {
+    const p = base + ext;
+    if (fs.existsSync(p) && fs.statSync(p).isFile()) return p;
+  }
+  for (const ext of ['.tsx', '.ts', '.jsx', '.js']) {
+    const p = path.join(base, 'index' + ext);
+    if (fs.existsSync(p) && fs.statSync(p).isFile()) return p;
+  }
+  return null;
+}
+
+function resolveLocalJsImport(specifier, entryFilePath, projectRoot) {
+  if (specifier.startsWith('./') || specifier.startsWith('../')) {
+    return existsAnyJsExtension(path.resolve(path.dirname(entryFilePath), specifier));
+  }
+  if (specifier.startsWith('@/')) {
+    const rest = specifier.slice(2);
+    return existsAnyJsExtension(path.join(projectRoot, 'src', rest))
+        ?? existsAnyJsExtension(path.join(projectRoot, rest));
+  }
+  return null;
+}
+
+function resolveLocalCssImport(specifier, entryFilePath, projectRoot) {
+  if (!/\.(css|scss|sass|less)$/i.test(specifier)) return null;
+  const exists = (p) => fs.existsSync(p) && fs.statSync(p).isFile() ? p : null;
+  if (specifier.startsWith('./') || specifier.startsWith('../')) {
+    return exists(path.resolve(path.dirname(entryFilePath), specifier));
+  }
+  if (specifier.startsWith('@/')) {
+    const rest = specifier.slice(2);
+    return exists(path.join(projectRoot, 'src', rest))
+        ?? exists(path.join(projectRoot, rest));
+  }
+  return null;
+}
+
+// Extract local JS/TS import specifiers from an entry file (first N lines,
+// real code only — reuses the lexer mask to skip strings / comments).
+function findLocalJsImportSpecifiers(text) {
+  const haystack = topNLines(text, JS_IMPORT_WINDOW);
+  const mask = buildLexerMask(haystack);
+  const re = /^\s*import\s+(?:[^'";]*?\s+from\s+)?(['"])([^'"]+)\1\s*;?\s*(?:\/\/.*)?$/gm;
+  const out = [];
+  let m;
+  while ((m = re.exec(haystack)) !== null) {
+    const importPos = m.index + m[0].indexOf('import');
+    if (mask[importPos] !== 'code') continue;
+    out.push(m[2]);
+  }
+  return out;
+}
+
+// Extract specifiers from CSS @import rules — `@import "path";`,
+// `@import 'path';`, `@import url("path");`, `@import url(path);`.
+function findCssImportSpecifiers(text) {
+  const stripped = text.replace(/\/\*[\s\S]*?\*\//g, '');
+  const out = [];
+  const reStr = /@import\s+(['"])([^'"]+)\1\s*[^;]*;/g;
+  const reUrl = /@import\s+url\s*\(\s*(['"]?)([^'")\s]+)\1\s*\)\s*[^;]*;/g;
+  let m;
+  while ((m = reStr.exec(stripped)) !== null) out.push(m[2]);
+  while ((m = reUrl.exec(stripped)) !== null) out.push(m[2]);
+  return out;
+}
+
+// Matches every legitimate shape of the exosphere styles.css specifier we've
+// seen: bare package name, versioned, or a relative path through node_modules.
+function specifierIsExosphereStyles(spec) {
+  return /(?:^|\/)@boomi\/exosphere(?:@[^/]+)?\/dist\/styles\.css$/.test(spec);
+}
+
+function cssFileReferencesExosphere(cssFilePath) {
+  let text;
+  try { text = fs.readFileSync(cssFilePath, 'utf8'); } catch { return false; }
+  return findCssImportSpecifiers(text).some(specifierIsExosphereStyles);
+}
+
+// True if the file begins with `'use client'` / `"use client"` as its own
+// directive statement (allowing leading blank lines or `//` line comments —
+// Next.js accepts both). Checks the first ~20 lines.
+function hasUseClientDirective(text) {
+  const head = text.split(/\r?\n/).slice(0, 20).join('\n');
+  return /^\s*(?:\/\/[^\n]*\n\s*)*['"]use client['"]\s*;?\s*$/m.test(head);
+}
+
+// True if the file contains a dynamic `import('@boomi/exosphere/dist/icon.js')`
+// call that is real code (not inside a string / comment / template literal).
+function hasDynamicIconImport(text) {
+  const mask = buildLexerMask(text);
+  const re = /\bimport\s*\(\s*(['"`])@boomi\/exosphere\/dist\/icon\.js\1\s*\)/g;
+  let m;
+  while ((m = re.exec(text)) !== null) {
+    const importPos = m.index + m[0].indexOf('import');
+    if (mask[importPos] === 'code') return true;
+  }
+  return false;
+}
+
 // Find a real, top-level side-effect import of `modulePath`. Returns the
 // 1-based line number of the `import` keyword, or null if not found.
 function findRealImport(text, modulePath, scanWindow) {
@@ -142,11 +265,43 @@ function findRealImport(text, modulePath, scanWindow) {
   return null;
 }
 
-function scanJsEntry(filePath) {
+function scanJsEntry(filePath, projectRoot) {
   const text = fs.readFileSync(filePath, 'utf8');
   const cssLine = findRealImport(text, CSS_PATH, JS_IMPORT_WINDOW);
   const iconLine = findRealImport(text, ICON_PATH, JS_IMPORT_WINDOW);
-  return { cssLine, iconLine };
+  let cssVia = null;
+  let iconVia = null;
+
+  // Follow one level of indirection for whichever contract isn't already
+  // satisfied by a direct import in the entry file.
+  if (!cssLine || !iconLine) {
+    for (const spec of findLocalJsImportSpecifiers(text)) {
+      if (!cssLine && !cssVia) {
+        const cssPath = resolveLocalCssImport(spec, filePath, projectRoot);
+        if (cssPath && cssFileReferencesExosphere(cssPath)) {
+          cssVia = path.relative(projectRoot, cssPath);
+        }
+      }
+      if (!iconLine && !iconVia) {
+        const jsPath = resolveLocalJsImport(spec, filePath, projectRoot);
+        if (jsPath) {
+          let modText;
+          try { modText = fs.readFileSync(jsPath, 'utf8'); } catch { continue; }
+          // Recipe B REQUIRES 'use client' — without the directive the same
+          // imports would still execute server-side.
+          if (hasUseClientDirective(modText)) {
+            const staticHit = findRealImport(modText, ICON_PATH, JS_IMPORT_WINDOW);
+            if (staticHit || hasDynamicIconImport(modText)) {
+              iconVia = path.relative(projectRoot, jsPath);
+            }
+          }
+        }
+      }
+      if ((cssLine || cssVia) && (iconLine || iconVia)) break;
+    }
+  }
+
+  return { cssLine, iconLine, cssVia, iconVia };
 }
 
 function scanHtmlEntry(filePath) {
@@ -175,12 +330,19 @@ function parseArgs(argv) {
   return args;
 }
 
+function statusLine(label, line, via) {
+  const padded = label.padEnd(10);
+  if (line) return `✓ ${padded} (line ${line})`;
+  if (via)  return `✓ ${padded} (via ${via})`;
+  return    `✗ ${padded} MISSING`;
+}
+
 function formatResult(entries) {
   const lines = [];
   for (const e of entries) {
     lines.push(`  ${e.relPath}`);
-    lines.push(`    ${e.cssLine ? '✓' : '✗'} styles.css${e.cssLine ? ` (line ${e.cssLine})` : ' MISSING'}`);
-    lines.push(`    ${e.iconLine ? '✓' : '✗'} icon.js${e.iconLine ? `    (line ${e.iconLine})` : '    MISSING'}`);
+    lines.push(`    ${statusLine('styles.css', e.cssLine, e.cssVia)}`);
+    lines.push(`    ${statusLine('icon.js', e.iconLine, e.iconVia)}`);
   }
   return lines.join('\n');
 }
@@ -199,10 +361,9 @@ function main() {
     const abs = path.join(root, rel);
     if (!fs.existsSync(abs) || !fs.statSync(abs).isFile()) continue;
     const isHtml = rel.endsWith('.html') || rel.endsWith('.htm');
-    const scan = isHtml ? scanHtmlEntry : scanJsEntry;
     let result;
     try {
-      result = scan(abs);
+      result = isHtml ? scanHtmlEntry(abs) : scanJsEntry(abs, root);
     } catch (err) {
       console.error(`[verify-root-imports] warn: could not read ${rel}: ${err.message}`);
       continue;
@@ -215,10 +376,12 @@ function main() {
       root,
       entries: foundEntries.map(e => ({
         path: e.relPath,
-        stylesCssLine: e.cssLine,
-        iconJsLine: e.iconLine,
+        stylesCssLine: e.cssLine ?? null,
+        stylesCssVia: e.cssVia ?? null,
+        iconJsLine: e.iconLine ?? null,
+        iconJsVia: e.iconVia ?? null,
       })),
-      pass: foundEntries.some(e => e.cssLine && e.iconLine),
+      pass: foundEntries.some(e => (e.cssLine || e.cssVia) && (e.iconLine || e.iconVia)),
     }, null, 2));
   }
 
@@ -238,10 +401,12 @@ function main() {
     process.exit(1);
   }
 
-  const passingEntry = foundEntries.find(e => e.cssLine && e.iconLine);
+  const passingEntry = foundEntries.find(e => (e.cssLine || e.cssVia) && (e.iconLine || e.iconVia));
   if (passingEntry) {
     if (!args.json) {
-      console.log(`[verify-root-imports] ✓  ${passingEntry.relPath} has both required imports (styles.css at L${passingEntry.cssLine}, icon.js at L${passingEntry.iconLine}).`);
+      const cssDesc = passingEntry.cssLine ? `L${passingEntry.cssLine}` : `via ${passingEntry.cssVia}`;
+      const iconDesc = passingEntry.iconLine ? `L${passingEntry.iconLine}` : `via ${passingEntry.iconVia}`;
+      console.log(`[verify-root-imports] ✓  ${passingEntry.relPath} satisfies both required imports (styles.css ${cssDesc}, icon.js ${iconDesc}).`);
       if (foundEntries.length > 1) {
         const others = foundEntries.filter(e => e !== passingEntry);
         console.log(`                      Other entry files scanned (FYI):`);
@@ -257,8 +422,8 @@ function main() {
     console.log(`                      Scanned:`);
     console.log(formatResult(foundEntries));
     console.log(``);
-    const missingCss = foundEntries.every(e => !e.cssLine);
-    const missingIcon = foundEntries.every(e => !e.iconLine);
+    const missingCss = foundEntries.every(e => !e.cssLine && !e.cssVia);
+    const missingIcon = foundEntries.every(e => !e.iconLine && !e.iconVia);
     const splitAcrossFiles = !missingCss && !missingIcon;
     if (splitAcrossFiles) {
       console.log(`                      Both imports are present, but in SEPARATE entry files.`);
@@ -269,6 +434,24 @@ function main() {
       console.log(`                      Add the missing import(s) at the top of ${suggestTarget}:`);
       if (missingCss)  console.log(`                        import "${CSS_PATH}";`);
       if (missingIcon) console.log(`                        import "${ICON_PATH}";`);
+      console.log(``);
+      console.log(`                      Alternative patterns this script also recognizes`);
+      console.log(`                      (one level of indirection from the entry file):`);
+      if (missingCss) {
+        console.log(`                        • styles.css via CSS @import — e.g. a \`./globals.css\` with`);
+        console.log(`                          \`@import "@boomi/exosphere/dist/styles.css";\` (or a relative`);
+        console.log(`                          node_modules path).`);
+      }
+      if (missingIcon) {
+        console.log(`                        • icon.js in a 'use client' Providers wrapper — Recipe B from`);
+        console.log(`                          references/frameworks/next.md. Static or dynamic import both`);
+        console.log(`                          work; the 'use client' directive is required so the module`);
+        console.log(`                          doesn't execute server-side.`);
+      }
+      console.log(``);
+      console.log(`                      If you're using a custom pattern this check can't reach,`);
+      console.log(`                      grep for '@boomi/exosphere/dist/icon.js' anywhere under src/`);
+      console.log(`                      to confirm the registry is actually loaded somewhere.`);
       if (missingIcon) {
         console.log(``);
         console.log(`                      Note: missing icon.js silently renders every icon as an empty`);

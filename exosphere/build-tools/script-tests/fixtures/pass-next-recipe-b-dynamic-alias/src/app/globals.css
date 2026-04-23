@@ -1,0 +1,5 @@
+/* Relative node_modules path — another legitimate shape we've seen in the
+   wild when the bundler resolves package names through relative paths. The
+   verifier must treat this as equivalent to the bare package specifier. */
+@import "tailwindcss";
+@import "../../node_modules/@boomi/exosphere/dist/styles.css";

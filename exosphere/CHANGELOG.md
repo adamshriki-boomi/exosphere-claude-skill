@@ -10,6 +10,30 @@ Each entry names the **Exosphere version** that the snapshot inside this skill w
 
 _Nothing yet._
 
+## [1.0.0-alpha.6] — 2026-04-23
+
+Verify-script follow-up from a second round of review on the same Next.js + `@boomi/exosphere@7.8.1` app. alpha.5 documented Recipe B (a client-only `<Providers>` wrapper for `icon.js`), but `scripts/verify-root-imports.mjs` (alpha.4) only recognized Recipe A. Apps that followed the skill's own SSR guidance got a false-positive failure. Same Exosphere snapshot (`7.8.3`); no reference data regenerated.
+
+### Fixed
+
+- **`scripts/verify-root-imports.mjs` now follows one level of indirection** for each side of the root-import contract, matching the patterns the skill itself documents:
+  - **CSS `@import` indirection.** If the entry file imports a local CSS file (e.g. `./globals.css`), the script opens it and accepts any `@import "@boomi/exosphere/dist/styles.css";` rule — package-name specifier, versioned specifier, or relative `node_modules` path all count. Handles both `@import "…";` and `@import url("…");` forms; strips `/* */` block comments first. Closes the false negative on the common Tailwind v4 + Exosphere setup where `styles.css` is pulled in from the stylesheet referenced by the layout, not from a JS import.
+  - **Recipe B (client-only Providers wrapper).** If the entry file imports a local JS/TS module (relative path or the default Next.js `@/` alias → `src/`, with a fallback to repo root for non-`src/` layouts), the script opens it and accepts `icon.js` as satisfied when that module (a) begins with `'use client'` / `"use client"` as its own directive statement AND (b) contains either a top-level static `import "@boomi/exosphere/dist/icon.js";` (reuses the alpha.4 lexer-lite state mask so string / template-literal hits still don't count) or a dynamic `import("@boomi/exosphere/dist/icon.js")` call anywhere in the file body (same lexer-mask rejection). The `'use client'` directive is load-bearing: a providers file without it runs server-side and the same imports still crash SSR, so the script refuses to accept that shape. New `fail-recipe-b-no-use-client` fixture proves the rejection.
+  - **Failure message updated.** Previous text pointed exclusively at Recipe A (`Add the missing import(s) at the top of app/layout.tsx: import "…/icon.js";`). If a user was on Recipe B to avoid an SSR crash, following that instruction would reintroduce the very crash Recipe B exists to prevent. The message now explicitly names both indirection pathways the script recognizes and points at `references/frameworks/next.md`.
+  - **JSON output extended.** `stylesCssVia` and `iconJsVia` fields (nullable path strings, relative to the project root) are included alongside the existing `stylesCssLine` / `iconJsLine` line numbers. Programmatic consumers get both "satisfied directly at line N" and "satisfied via indirection through path P" without re-running the scan.
+  - **Text output extended.** When an import is satisfied through indirection, the status line now reads `✓ styles.css (via app/globals.css)` / `✓ icon.js (via src/components/exosphere-provider.tsx)` instead of `(line N)`; the success line shows both.
+
+### Added
+
+- **Four new fixtures** under `build-tools/script-tests/fixtures/`: `pass-next-css-indirection/`, `pass-next-recipe-b-static/`, `pass-next-recipe-b-dynamic-alias/` (models the reviewer's real app: `src/` layout, `@/` alias, Tailwind v4 + Exosphere via CSS @import with a relative `node_modules` path, dynamic `import()` in a `'use client'` `useEffect` wrapper), and the paired negative case `fail-recipe-b-no-use-client/`. Test harness now runs 15 fixtures; all pass.
+
+### Notes
+
+- No change to `exosphere_version` — still `@boomi/exosphere@7.8.3`.
+- No change to the skill trigger description; the trigger-eval loop doesn't need to re-run.
+- `SKILL.md` step 1 (Orient) description of `verify-root-imports.mjs` updated to mention the two indirection pathways it now recognizes, so agents know the script handles both recipes.
+- Indirection depth intentionally capped at one level. Multi-level `@import` chains or layered Providers wrappers aren't common in practice and would widen the surface beyond what the regex-based approach can safely validate; the failure message suggests a manual `grep` fallback for custom patterns.
+
 ## [1.0.0-alpha.5] — 2026-04-23
 
 Documentation + tooling fixes from an independent review of alpha.3 against a real Next.js + `@boomi/exosphere@7.8.1` app. Same Exosphere snapshot (`7.8.3`); no reference data regenerated.

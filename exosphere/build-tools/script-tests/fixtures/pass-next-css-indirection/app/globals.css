@@ -1,0 +1,5 @@
+/* Mimics the common Tailwind v4 + Exosphere pattern: Tailwind first, then
+   Exosphere's styles.css, both pulled in via CSS @import from the stylesheet
+   that the App Router layout references. */
+@import "tailwindcss";
+@import "@boomi/exosphere/dist/styles.css";
