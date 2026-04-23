@@ -106,7 +106,13 @@ That command:
 4. Rebuilds `exosphere/references/**` (protecting hand-authored files).
 5. Pulls Exosphere's own changelog and splices a human-readable diff into `exosphere/CHANGELOG.md`.
 6. Bumps `manifest.json` + `SKILL.md` frontmatter + CHANGELOG version headers.
-7. (You then) run the evals, re-package to a fresh `.skill`, cut a release.
+7. (You then) run the evals, then re-package to a fresh `.skill`:
+
+   ```bash
+   ./exosphere/build-tools/package-skill.sh   # writes exosphere.skill at the repo root
+   ```
+
+   The wrapper stages a clean copy before handing off to the skill-creator's `package_skill.py`, so `build-tools/` itself isn't inlined into the shipped bundle. See `exosphere/build-tools/README.md` for details.
 
 `exosphere/build-tools/README.md` has CI-ready GitHub Actions snippets for automating this weekly.
 

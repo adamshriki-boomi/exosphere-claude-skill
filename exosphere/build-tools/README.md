@@ -35,8 +35,29 @@ After the script finishes:
 
 - Review `CHANGELOG.md` — annotate what changed in the skill itself (beyond the
   auto-generated Exosphere diff).
-- Run the evals (`python -m scripts.package_skill …` upstream or `claude -p` locally).
-- Re-package: `python -m scripts.package_skill ../exosphere` → new `.skill`.
+- Run the evals (`claude -p` locally or the skill-creator's eval runner).
+- Re-package: `./package-skill.sh` (see below) → new `.skill` at the repo root.
+
+### `package-skill.sh`
+
+Wrapper around the skill-creator's `package_skill.py` that stages a clean copy
+of `exosphere/` first, excluding `build-tools/` (this directory), `evals/`,
+`node_modules`, and `.DS_Store`. Without the staging step, the packager would
+silently inline `build-tools/` — 30+ MB of scraper tooling — into the shipped
+`.skill`. Users don't need any of that.
+
+```bash
+# From the repo root:
+exosphere/build-tools/package-skill.sh             # writes exosphere.skill to repo root
+exosphere/build-tools/package-skill.sh ./dist      # write to ./dist instead
+
+# Using a non-default packager location:
+PACKAGE_SKILL_PY=/path/to/package_skill.py exosphere/build-tools/package-skill.sh
+```
+
+Prerequisites: Python 3 with `pyyaml` installed (`python3 -m pip install --user
+pyyaml`) and the skill-creator plugin installed in Claude Code (so
+`package_skill.py` resolves under `~/.claude/plugins/…`).
 
 ## Flags
 
