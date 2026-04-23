@@ -6,14 +6,14 @@
       "id": 1,
       "name": "react-install-plus-dialog",
       "prompt": "I'm starting a fresh Vite + React + TypeScript project and I want to use the Boomi Exosphere design system. Walk me through installing it, and then show me a primary button that opens a confirmation dialog when clicked. The dialog should have 'Confirm delete' as the header, body text 'Are you sure you want to delete this?', and OK / Cancel buttons. Use the current Exosphere recommendations.",
-      "expected_output": "Installs @boomi/exosphere, imports dist/styles.css in main.tsx, uses ExButton + ExDialog (not <button>/<dialog>), wires dialog open state with ExDialog's open/onOpenChange (not onClick/onClose), references ButtonType/ButtonFlavor enums appropriately. Does NOT use hex colors.",
+      "expected_output": "Installs @boomi/exosphere, imports BOTH dist/styles.css AND dist/icon.js in main.tsx (icon.js required 7.x+ or ExDialog's close icon renders empty), uses ExButton + ExDialog (not <button>/<dialog>), wires dialog open state with ExDialog's open/onOpenChange (not onClick/onClose), references ButtonType/ButtonFlavor enums appropriately. Does NOT use hex colors.",
       "files": []
     },
     {
       "id": 2,
       "name": "angular-users-table",
       "prompt": "I'm building a users admin page in an Angular 17 app (standalone components). The page should show a sortable, paginated table of users with columns for Name, Email, Role, and an actions column with an edit button per row. It should use Exosphere components. Please give me the full component code.",
-      "expected_output": "Uses ExTable (web-component form <ex-table> in Angular template) or ExStructuredList, configures CUSTOM_ELEMENTS_SCHEMA in the standalone component, imports '@boomi/exosphere/dist/styles.css' and exo-table-styles.css. Uses <ex-icon-button> for row actions, not raw <button>. Wires column defs + row data via property binding. Mentions NgZone for heavy-grid performance. No hex colors.",
+      "expected_output": "Uses ExTable (web-component form <ex-table> in Angular template) or ExStructuredList, configures CUSTOM_ELEMENTS_SCHEMA in the standalone component, imports '@boomi/exosphere/dist/styles.css' AND '@boomi/exosphere/dist/icon.js' (icon.js required 7.x+ or <ex-icon-button> renders empty) AND exo-table-styles.css. Uses <ex-icon-button> for row actions, not raw <button>. Wires column defs + row data via property binding. Mentions NgZone for heavy-grid performance. No hex colors.",
       "files": []
     },
     {
@@ -27,7 +27,7 @@
       "id": 4,
       "name": "next-dashboard-shell",
       "prompt": "I'm working on a Next.js 14 App Router dashboard. I need a shell layout: left navigation drawer with items for Home, Integrations, Runtime, Settings, then a top page header with breadcrumbs (Home > Integrations > My Integration) + a right-aligned primary action button 'New Integration' and an overflow menu with Import / Export. Content area below. All using Exosphere.",
-      "expected_output": "Uses ExLeftMenubar (or ExNavigationDrawer) with its Ex*Item children, ExPageHeader with ExBreadcrumb + ExBreadcrumbItem, ExButton for the primary action, ExIconButton + ExMenu/ExMenuItem for the overflow. Every file using Ex* components has 'use client' at the top. Imports @boomi/exosphere/dist/styles.css in app/layout.tsx. No hex colors.",
+      "expected_output": "Uses ExLeftMenubar (or ExNavigationDrawer) with its Ex*Item children, ExPageHeader with ExBreadcrumb + ExBreadcrumbItem, ExButton for the primary action, ExIconButton + ExMenu/ExMenuItem for the overflow. Every file using Ex* components has 'use client' at the top. Imports BOTH @boomi/exosphere/dist/styles.css AND @boomi/exosphere/dist/icon.js in app/layout.tsx (icon.js required 7.x+ or ExIconButton / ExMenu chevrons render empty). No hex colors.",
       "files": []
     },
     {

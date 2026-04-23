@@ -5,6 +5,7 @@
       { "text": "Imports ExButton from @boomi/exosphere", "check": "grep_any", "pattern": "import[^;]*ExButton[^;]*from +[\"']@boomi/exosphere[\"']", "files": "**/*.{tsx,ts,jsx,js}" },
       { "text": "Imports ExDialog from @boomi/exosphere", "check": "grep_any", "pattern": "import[^;]*ExDialog[^;]*from +[\"']@boomi/exosphere[\"']", "files": "**/*.{tsx,ts,jsx,js}" },
       { "text": "Imports @boomi/exosphere/dist/styles.css in an entry file", "check": "grep_any", "pattern": "[\"']@boomi/exosphere/dist/styles\\.css[\"']", "files": "**/*.{tsx,ts,jsx,js}" },
+      { "text": "Imports @boomi/exosphere/dist/icon.js in an entry file (required for dialog close icon, combobox chevrons, etc.)", "check": "grep_any", "pattern": "[\"']@boomi/exosphere/dist/icon\\.js[\"']", "files": "**/*.{tsx,ts,jsx,js}" },
       { "text": "Uses <ExDialog> element in JSX", "check": "grep_any", "pattern": "<ExDialog\\b", "files": "**/*.{tsx,jsx}" },
       { "text": "Uses <ExButton> element in JSX", "check": "grep_any", "pattern": "<ExButton\\b", "files": "**/*.{tsx,jsx}" },
       { "text": "No raw <button> tags", "check": "grep_none", "pattern": "<button[\\s>]", "files": "**/*.{tsx,jsx}" },
@@ -19,6 +20,7 @@
       { "text": "Uses <ex-icon-button> or <ex-button> for row actions", "check": "grep_any", "pattern": "<ex-(icon-)?button\\b", "files": "**/*.{ts,html}" },
       { "text": "No raw <button> tags", "check": "grep_none", "pattern": "<button[\\s>]", "files": "**/*.{ts,html}" },
       { "text": "Imports @boomi/exosphere/dist/styles.css", "check": "grep_any", "pattern": "@boomi/exosphere/dist/styles\\.css", "files": "**/*.{ts,json,html,css,scss}" },
+      { "text": "Imports @boomi/exosphere/dist/icon.js (required for <ex-icon-button> to render)", "check": "grep_any", "pattern": "@boomi/exosphere/dist/icon\\.js", "files": "**/*.{ts,json,html,css,scss}" },
       { "text": "Side-effect imports @boomi/exosphere (custom element register)", "check": "grep_any", "pattern": "import +[\"']@boomi/exosphere[\"']", "files": "**/*.{ts,js}" },
       { "text": "Imports exo-table-styles.css (required for ExTable)", "check": "grep_any", "pattern": "exo-table-styles\\.css", "files": "**/*.{ts,json,html,css,scss,md}" },
       { "text": "No hex color literals", "check": "grep_none", "pattern": "#[0-9a-fA-F]{3,8}\\b", "files": "**/*.{ts,html,css,scss}" }
@@ -42,6 +44,7 @@
       { "text": "Uses ExButton for the primary action", "check": "grep_any", "pattern": "ExButton", "files": "**/*.{tsx,jsx}" },
       { "text": "Uses ExMenu + ExMenuItem for overflow", "check": "grep_any", "pattern": "ExMenuItem", "files": "**/*.{tsx,jsx}" },
       { "text": "layout.tsx imports @boomi/exosphere/dist/styles.css", "check": "grep_any", "pattern": "@boomi/exosphere/dist/styles\\.css", "files": "**/layout.tsx" },
+      { "text": "layout.tsx imports @boomi/exosphere/dist/icon.js (required for ExIconButton to render)", "check": "grep_any", "pattern": "@boomi/exosphere/dist/icon\\.js", "files": "**/layout.tsx" },
       { "text": "No raw <button> tags", "check": "grep_none", "pattern": "<button[\\s>]", "files": "**/*.{tsx,jsx}" },
       { "text": "No hex color literals", "check": "grep_none", "pattern": "#[0-9a-fA-F]{3,8}\\b", "files": "**/*.{tsx,ts,jsx,js,css,scss}" }
     ],

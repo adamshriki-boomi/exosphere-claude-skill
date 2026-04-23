@@ -37,17 +37,21 @@ yarn add @boomi/exosphere
 pnpm add @boomi/exosphere
 ```
 
-Then **import the CSS** in an entry file that runs before any Exosphere component:
+Then **import these two modules** at the app root — both are required:
 
 ```js
-import "@boomi/exosphere/dist/styles.css";
+import "@boomi/exosphere/dist/styles.css"; // component styling
+import "@boomi/exosphere/dist/icon.js";    // icon registry (7.x+)
 ```
 
-Without this import, `<ex-button>` and `<ExButton />` render as unstyled text. This is the single most common "nothing's working" cause.
+- Skip `styles.css` → `<ex-button>` / `<ExButton />` render as unstyled text.
+- Skip `icon.js` → icons inside every component (dialog close X, combobox chevron, toast status, date-picker glyphs, pagination arrows, side-drawer chevrons) render as **empty** — no error, no warning. See [`foundation/iconography.md`](foundation/iconography.md) for why.
+
+These are the two most common "nothing's working" failures.
 
 ## Optional CSS bundles
 
-Beyond `styles.css`, Exosphere ships a few additional stylesheets you load *only when needed*:
+Beyond the two mandatory root imports above, Exosphere ships a few additional stylesheets you load *only when needed*:
 
 - `@boomi/exosphere/dist/exo-component-theme.css` — component theming overrides.
 - `@boomi/exosphere/dist/exo-table-styles.css` — required if you use `ExTable` (wraps AG-Grid).
@@ -63,6 +67,7 @@ Import alongside `styles.css` in the same entry file when the feature applies.
 ```tsx
 // src/main.tsx (or App.tsx for CRA)
 import "@boomi/exosphere/dist/styles.css";
+import "@boomi/exosphere/dist/icon.js";
 
 import { ExButton } from "@boomi/exosphere";
 
@@ -104,11 +109,12 @@ import { ExButton } from "@boomi/exosphere";
 // ...
 ```
 
-Import CSS once in the root layout:
+Import the two mandatory modules once in the root layout:
 
 ```tsx
 // app/layout.tsx
 import "@boomi/exosphere/dist/styles.css";
+import "@boomi/exosphere/dist/icon.js";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return <html><body>{children}</body></html>;
@@ -129,6 +135,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 import '@boomi/exosphere/dist/styles.css';
+import '@boomi/exosphere/dist/icon.js';
 import '@boomi/exosphere';
 
 import { AppComponent } from './app.component';
@@ -195,6 +202,7 @@ Or equivalently, at runtime:
 // src/main.ts
 import { createApp } from 'vue';
 import '@boomi/exosphere/dist/styles.css';
+import '@boomi/exosphere/dist/icon.js';
 import '@boomi/exosphere';
 import App from './App.vue';
 
@@ -224,6 +232,7 @@ No build step. Good for quick prototypes or embedding in non-bundled pages:
 <html>
   <head>
     <link rel="stylesheet" href="https://unpkg.com/@boomi/exosphere@7.8.3/dist/styles.css">
+    <script type="module" src="https://unpkg.com/@boomi/exosphere@7.8.3/dist/icon.js"></script>
     <script type="module" src="https://unpkg.com/@boomi/exosphere@7.8.3/dist/index.mjs"></script>
   </head>
   <body>
@@ -238,6 +247,7 @@ For local installation in a non-bundled project:
 
 ```html
 <link rel="stylesheet" href="/node_modules/@boomi/exosphere/dist/styles.css">
+<script type="module" src="/node_modules/@boomi/exosphere/dist/icon.js"></script>
 <script type="module" src="/node_modules/@boomi/exosphere/dist/index.mjs"></script>
 ```
 
@@ -256,11 +266,13 @@ Drop this into any framework's main component and it should render a branded blu
 <ex-button type="primary" flavor="branded">Verify</ex-button>
 ```
 
-If it renders as plain text: the CSS import is missing or in the wrong file.
+If it renders as plain text: the `styles.css` import is missing or in the wrong file.
 
 If it renders but looks wrong (no color, wrong font): the `styles.css` import resolved but a font or CSS variable isn't loading — check the browser devtools console for 404s on font files.
 
 If you see an Angular/Vue template error about unknown element `ex-button`: the framework setup step (`CUSTOM_ELEMENTS_SCHEMA` / `isCustomElement`) is missing.
+
+If the button renders correctly but any icon (dialog close X, menu chevron, etc.) is an empty box: the `icon.js` import is missing from the root. See [`foundation/iconography.md`](foundation/iconography.md).
 
 ---
 

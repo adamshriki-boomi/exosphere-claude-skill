@@ -5,11 +5,11 @@
       "runs": {
         "with_skill": {
           "passed": 8,
-          "total": 8
+          "total": 9
         },
         "without_skill": {
           "passed": 2,
-          "total": 8
+          "total": 9
         }
       }
     },
@@ -18,11 +18,11 @@
       "runs": {
         "with_skill": {
           "passed": 9,
-          "total": 9
+          "total": 10
         },
         "without_skill": {
           "passed": 3,
-          "total": 9
+          "total": 10
         }
       }
     },
@@ -31,11 +31,11 @@
       "runs": {
         "with_skill": {
           "passed": 10,
-          "total": 10
+          "total": 11
         },
         "without_skill": {
           "passed": 10,
-          "total": 10
+          "total": 11
         }
       }
     },

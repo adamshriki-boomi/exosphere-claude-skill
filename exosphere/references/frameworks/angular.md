@@ -8,17 +8,22 @@ Exosphere's web components drop into Angular with one setup step: tell Angular's
 npm i @boomi/exosphere --save
 ```
 
-## Wire the CSS + register the custom elements
+## Wire the root imports + register the custom elements
 
-Register Exosphere's JS once (this triggers custom element registration) and import its CSS:
+Three imports at bootstrap — the first two are mandatory, the third runs the custom-element registration:
 
 ```ts
 // src/main.ts  or  app.module.ts
-import '@boomi/exosphere/dist/styles.css';
-import '@boomi/exosphere';
+import '@boomi/exosphere/dist/styles.css'; // component styling
+import '@boomi/exosphere/dist/icon.js';    // icon registry (7.x+) — populates window symbol before registration
+import '@boomi/exosphere';                  // side-effect: defines every <ex-*> custom element
 ```
 
-The import of `@boomi/exosphere` (without destructuring) runs the `register` side-effect that defines every `<ex-*>` custom element. Do this exactly once, at application bootstrap.
+Do this exactly once, at application bootstrap. Import `icon.js` **before** the `@boomi/exosphere` side-effect so the icon store is populated by the time any custom element renders.
+
+- Missing `styles.css` → components look plain.
+- Missing `icon.js` → icons inside `<ex-icon>` / `<ex-icon-button>` and the close-X / chevron glyphs inside `<ex-dialog>`, `<ex-combobox>`, `<ex-toast>` etc. render empty. No Angular error. See [`foundation/iconography.md`](../foundation/iconography.md).
+- Missing `@boomi/exosphere` side-effect → Angular errors: *"ex-button is not a known element"*.
 
 ## Module-based apps: add `CUSTOM_ELEMENTS_SCHEMA`
 
@@ -28,6 +33,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 import '@boomi/exosphere/dist/styles.css';
+import '@boomi/exosphere/dist/icon.js';
 import '@boomi/exosphere';
 
 import { AppComponent } from './app.component';
@@ -188,6 +194,8 @@ See [`assets/framework-setup-snippets/angular-app.module.ts`](../../assets/frame
 **Events don't fire** — Event names are kebab-case. `(click)` works on most `<ex-*>` tags (they fire native click), but for Exosphere-specific events check the story.
 
 **Styles missing / components look plain** — The `@boomi/exosphere/dist/styles.css` import isn't loading. Add it to `angular.json` under `styles`, or import in `main.ts`.
+
+**Icons inside dialogs, comboboxes, toasts, or `<ex-icon>` render as empty boxes** — The `@boomi/exosphere/dist/icon.js` import is missing. Add it to `main.ts` (or `app.module.ts`) alongside the `styles.css` import. See [`foundation/iconography.md`](../foundation/iconography.md).
 
 **`ExTable` renders no grid** — Also import `@boomi/exosphere/dist/exo-table-styles.css`.
 

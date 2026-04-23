@@ -4,9 +4,11 @@
 
 import { createApp } from "vue";
 
-// Load Exosphere styles + register custom elements.
-import "@boomi/exosphere/dist/styles.css";
-import "@boomi/exosphere";
+// Load Exosphere: styles, icon registry, and custom-element registration.
+// Order matters: icon.js populates the icon store before custom elements render.
+import "@boomi/exosphere/dist/styles.css"; // component styling
+import "@boomi/exosphere/dist/icon.js";    // icon registry — required 7.x+
+import "@boomi/exosphere";                  // side-effect: registers every <ex-*> custom element
 
 // If your app uses ExTable:
 // import "@boomi/exosphere/dist/exo-table-styles.css";

@@ -8,22 +8,26 @@ Vue 3 handles web components natively — one compiler config, and you're in. Th
 npm i @boomi/exosphere --save
 ```
 
-## Wire the CSS + register the custom elements
+## Wire the root imports + register the custom elements
 
-Once, at application bootstrap:
+Once, at application bootstrap — three imports, the first two are mandatory:
 
 ```ts
 // src/main.ts
 import { createApp } from 'vue';
-import '@boomi/exosphere/dist/styles.css';
-import '@boomi/exosphere';
+import '@boomi/exosphere/dist/styles.css'; // component styling
+import '@boomi/exosphere/dist/icon.js';    // icon registry (7.x+)
+import '@boomi/exosphere';                  // side-effect: registers every <ex-*> custom element
 import App from './App.vue';
 
 const app = createApp(App);
 app.mount('#app');
 ```
 
-The `@boomi/exosphere` side-effect import registers every `<ex-*>` custom element.
+Import `icon.js` **before** the `@boomi/exosphere` side-effect so the icon store is populated by the time any `<ex-*>` renders.
+
+- Missing `styles.css` → components look plain.
+- Missing `icon.js` → icons inside `<ex-icon>` / `<ex-icon-button>` and the glyphs inside `<ex-dialog>`, `<ex-combobox>`, `<ex-toast>` etc. render empty, silent. See [`foundation/iconography.md`](../foundation/iconography.md).
 
 ## Silence "unknown element" warnings
 
@@ -179,12 +183,13 @@ export default defineNuxtConfig({
 });
 ```
 
-And import the side-effect register in a client-only plugin:
+And import the icon registry + side-effect register in a client-only plugin:
 
 ```ts
 // plugins/exosphere.client.ts
-export default defineNuxtPlugin(() => {
-  import('@boomi/exosphere');
+export default defineNuxtPlugin(async () => {
+  await import('@boomi/exosphere/dist/icon.js'); // populate icon registry first
+  await import('@boomi/exosphere');              // then register custom elements
 });
 ```
 
@@ -205,3 +210,5 @@ See [`assets/framework-setup-snippets/vue-main.ts`](../../assets/framework-setup
 **Nuxt SSR errors about `window is not defined`** — Move Exosphere imports into a `.client.ts` plugin; the component tree renders client-only.
 
 **Styles missing** — `styles.css` not imported. In Nuxt, add to `css: []` in `nuxt.config.ts`. In Vite, import in `main.ts`.
+
+**Icons render as empty boxes inside dialogs, comboboxes, toasts, or `<ex-icon>`** — The `@boomi/exosphere/dist/icon.js` import is missing. Add it to `main.ts` alongside `styles.css` (or to the Nuxt client plugin). See [`foundation/iconography.md`](../foundation/iconography.md).

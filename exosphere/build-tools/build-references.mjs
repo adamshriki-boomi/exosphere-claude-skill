@@ -95,6 +95,7 @@ const PROTECTED_PATHS = new Set([
   'frameworks/angular.md',
   'frameworks/vue.md',
   'foundation/design-tokens.md',
+  'foundation/iconography.md',
   'foundation/_index.md',
   'patterns/_index.md',
   'content-guidelines/_index.md',

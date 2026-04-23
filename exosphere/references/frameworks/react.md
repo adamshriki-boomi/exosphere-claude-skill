@@ -8,19 +8,23 @@ First-class support. Exosphere ships React wrappers via `@lit-labs/react` that e
 npm i @boomi/exosphere --save
 ```
 
-## Wire the CSS — once, at the root
+## Wire the root imports — once, at the root
+
+Two modules, both required:
 
 ```tsx
 // src/main.tsx (Vite) or src/index.tsx (CRA)
 import React from "react";
 import ReactDOM from "react-dom/client";
-import "@boomi/exosphere/dist/styles.css"; // <- this line is load-bearing
+import "@boomi/exosphere/dist/styles.css"; // component styling
+import "@boomi/exosphere/dist/icon.js";    // icon registry (7.x+)
 import App from "./App";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(<App />);
 ```
 
-Missing this import is the #1 cause of "Exosphere components render as unstyled text."
+- Missing `styles.css` → components render as unstyled text (the #1 "nothing works" bug).
+- Missing `icon.js` → every icon (dialog close X, combobox chevron, toast status marker, pagination arrows, and anything inside `<ex-icon>` / `<ex-icon-button>`) renders empty with no error or warning. See [`foundation/iconography.md`](../foundation/iconography.md) for the full story.
 
 ## Use components
 

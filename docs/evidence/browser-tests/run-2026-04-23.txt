@@ -1,0 +1,52 @@
+
+=== Browser snapshot: WITH icon.js ===
+{
+  "windowSymbolPresent": true,
+  "windowSymbolType": "object",
+  "windowSymbolTopKeys": [
+    "Icons",
+    "IconsNew"
+  ],
+  "totalIconNames": 1019,
+  "sampleIconNames": [
+    "ACPColor",
+    "AIAgentColor",
+    "AIControlTowerColor",
+    "AIStudioColor",
+    "APIM-APIGColor",
+    "B2B-EDIColor",
+    "BoomiEmbedColor",
+    "CAMColor",
+    "CommandCenterColor",
+    "ConnectColor"
+  ],
+  "probeHits": [
+    "Trash",
+    "Close",
+    "Warning",
+    "Download",
+    "Edit"
+  ]
+}
+
+=== Browser snapshot: WITHOUT icon.js ===
+{
+  "windowSymbolPresent": false,
+  "windowSymbolType": "undefined",
+  "windowSymbolTopKeys": [],
+  "totalIconNames": 0,
+  "sampleIconNames": [],
+  "probeHits": []
+}
+
+=== Assertions ===
+
+  ✓ with icon.js → window[Symbol.for('$$EXOSPHERE_ICON$$')] is present
+  ✓ with icon.js → icon registry has >=100 entries (got 1019)
+  ✓ with icon.js → registry contains at least 3 well-known icon names (found: Trash, Close, Warning, Download, Edit)
+  ✓ without icon.js → window icon registry symbol absent
+  ✓ without icon.js → no icon names available (got 0)
+
+Passed 5/5
+
+icon.js contract verified end-to-end in headless chromium.

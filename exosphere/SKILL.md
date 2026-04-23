@@ -13,9 +13,9 @@ description: |
   When in doubt about an Ex-prefixed name or a Boomi UI task, trigger.
 license: BSD-3-Clause
 metadata:
-  version: 1.0.0-alpha.2
+  version: 1.0.0-alpha.3
   exosphere_version: 7.8.3
-  built_at: "2026-04-21"
+  built_at: "2026-04-23"
   official: true
   owner: Boomi, LP
 ---
@@ -26,14 +26,14 @@ You are now an Exosphere specialist. Every UI decision goes through the Exospher
 
 ## About this snapshot
 
-This skill is version **1.0.0-alpha**, built against **`@boomi/exosphere@7.8.3`**. `CHANGELOG.md` (in this skill's root) lists what each version includes. `manifest.json` has the machine-readable version data. If the user's project is on a newer Exosphere than 7.8.3, you may hit components / props that are missing from the local references — see *When a reference is missing* below.
+This skill is version **1.0.0-alpha.3**, built against **`@boomi/exosphere@7.8.3`**. `CHANGELOG.md` (in this skill's root) lists what each version includes. `manifest.json` has the machine-readable version data. If the user's project is on a newer Exosphere than 7.8.3, you may hit components / props that are missing from the local references — see *When a reference is missing* below.
 
 ## What Exosphere is (the essentials)
 
 - Boomi's design system, published as `@boomi/exosphere` on npm.
 - A library of **Lit-based web components** (`ex-*` tags like `<ex-button>`) plus first-class **React wrappers** (`Ex*` names like `ExButton`). Also works in Angular (via `CUSTOM_ELEMENTS_SCHEMA`), Vue (templates), Next.js (client components), and plain HTML (CDN).
 - Themed by CSS variables (`--exo-*`) with light and dark variants shipped out of the box.
-- Requires importing `@boomi/exosphere/dist/styles.css` into the app root — without this, components render unstyled.
+- Requires two root imports: `@boomi/exosphere/dist/styles.css` (styling) and `@boomi/exosphere/dist/icon.js` (icon registry, 7.x+). Skip `styles.css` → unstyled text; skip `icon.js` → icons render as empty boxes silently. See [`references/foundation/iconography.md`](references/foundation/iconography.md).
 
 ## The Exosphere workflow (the core loop you MUST follow)
 
@@ -45,7 +45,9 @@ Before writing any markup:
 
 - Run `scripts/detect-framework.sh` in the target project to pick the framework context (React / Next / Angular / Vue / other). This reads `package.json` and tells you what you're working with.
 - Confirm Exosphere is installed: look for `@boomi/exosphere` in `package.json` dependencies. If missing, consult `references/installation.md` and offer to install.
-- Confirm `@boomi/exosphere/dist/styles.css` is imported from an app-root file (e.g. `main.tsx`, `app/layout.tsx`, `src/main.js`, `main.ts`). If missing, this is the single most common cause of "Exosphere components render as plain text."
+- Confirm **both** root imports are present in an app-root file (e.g. `main.tsx`, `app/layout.tsx`, `src/main.js`, `main.ts`):
+  - `@boomi/exosphere/dist/styles.css` — missing this is the #1 cause of "components render as plain text."
+  - `@boomi/exosphere/dist/icon.js` — missing this renders every icon (dialog close X, combobox chevron, toast status markers, `<ex-icon>`, `<ex-icon-button>`) as silent empty boxes. See `references/foundation/iconography.md`.
 - Run `scripts/check-exosphere-version.mjs` to compare the project's installed Exosphere version to this snapshot (7.8.3). If the project is on something newer, mention the drift to the user up front so they know to expect on-demand lookups.
 
 ### 2. Map to a component
@@ -118,9 +120,9 @@ Go to `references/components/_index.md` first — it lists every component group
 
 Load these as needed — don't pre-read unless the task demands it:
 
-- `references/foundation/color.md` — palette, semantic color roles, dark-theme parity.
-- `references/foundation/typography.md` — type scale, fonts (Nunito Sans is the system font), heading hierarchy.
-- `references/foundation/iconography.md` — 4 icon sets (v1/v2/v3/FullColor), `ExIcon` usage.
+- `references/foundation/color-key-decisions.md` (plus `color-theme.md` for dark-theme roles and `color-approved-colors-by-color.md` for the approved palette) — palette, semantic color roles, dark-theme parity.
+- `references/foundation/typography-key-decisions.md` (plus `typography-body.md` and `typography-headings.md`) — type scale, fonts (Nunito Sans is the system font), heading hierarchy.
+- `references/foundation/iconography.md` — the mandatory `icon.js` root import, `<ex-icon>` / `ExIcon` usage with `IconVariant` / `IconSize`, shipped tiers (primary / V2 / V1 / Archive), a11y requirements, color customization via tokens.
 - `references/foundation/accessibility.md` — a11y rules that all Exosphere components follow by default.
 - `references/foundation/voice-and-tone.md` — Boomi's product voice.
 - `references/foundation/data-formatting.md` — dates, numbers, currencies, identifiers.
@@ -169,7 +171,7 @@ If `scripts/check-exosphere-version.mjs` reports the project is on a newer Exosp
 
 - ❌ Do not use hex / rgb / px literals for anything that has a token.
 - ❌ Do not use raw `<button>`, `<input>`, `<select>`, `<dialog>`, `<a>`, `<table>` when an Exosphere component fits.
-- ❌ Do not skip the CSS import. Exosphere's components need `@boomi/exosphere/dist/styles.css` imported from the app root.
+- ❌ Do not skip the two mandatory root imports. Exosphere's components need both `@boomi/exosphere/dist/styles.css` (styling) and `@boomi/exosphere/dist/icon.js` (icon registry, 7.x+). Missing `styles.css` → components render unstyled. Missing `icon.js` → every icon, including the close-X inside dialogs and chevrons inside comboboxes, renders as an empty box silently. Both go in the app root (`main.tsx`, `app/layout.tsx`, `src/main.ts`, etc.).
 - ❌ Do not skip the framework setup step (e.g., `CUSTOM_ELEMENTS_SCHEMA` in Angular, `isCustomElement` in Vue, `'use client'` in Next). The setup isn't cosmetic — the components won't work without it.
 - ❌ Do not build custom components without walking the suggest → ask → flag flow. This includes avoiding "just a quick wrapper" and "just a utility div" — if it's a visible UI unit, it goes through the flow.
 - ❌ Do not fabricate component names, props, or enum values. If unsure, check `assets/component-exports.json` or fetch the live Storybook doc. Never guess.

@@ -3,7 +3,10 @@
 
 import React from "react";
 import ReactDOM from "react-dom/client";
-import "@boomi/exosphere/dist/styles.css"; // <- required; without this components are unstyled
+
+// Two mandatory root imports — both required for Exosphere 7.x+
+import "@boomi/exosphere/dist/styles.css"; // component styling
+import "@boomi/exosphere/dist/icon.js";    // icon registry — missing this silently empties every icon
 
 // If you use ExTable anywhere, also:
 // import "@boomi/exosphere/dist/exo-table-styles.css";

@@ -10,11 +10,14 @@ This page covers the App Router (Next 13+). Pages Router works similarly — tre
 npm i @boomi/exosphere --save
 ```
 
-## Wire the CSS — in root layout
+## Wire the root imports — in root layout
+
+Two modules, both required:
 
 ```tsx
 // app/layout.tsx
-import "@boomi/exosphere/dist/styles.css";
+import "@boomi/exosphere/dist/styles.css"; // component styling
+import "@boomi/exosphere/dist/icon.js";    // icon registry (7.x+)
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -25,7 +28,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 }
 ```
 
-CSS imports in `layout.tsx` (or any Server Component) are fine — the CSS itself doesn't need to run on the client, only the JS does. Only the Exosphere **components** need client rendering.
+These imports in `layout.tsx` (a Server Component) are fine — `styles.css` is CSS, and `icon.js` is a side-effect module that populates a `window[Symbol.for("$$EXOSPHERE_ICON$$")]` registry on the client when the bundle loads. Only the Exosphere **components themselves** need `'use client'`.
+
+- Missing `styles.css` → components render unstyled.
+- Missing `icon.js` → every icon (including the close X inside `ExDialog`, chevrons inside `ExCombobox`, status markers inside `ExToast`) renders empty, silently. See [`foundation/iconography.md`](../foundation/iconography.md).
 
 ## Use components — mark as client
 
@@ -99,6 +105,7 @@ If you use Next's `next/font` system and want to avoid CLS, import Nunito Sans v
 // app/layout.tsx
 import { Nunito_Sans } from 'next/font/google';
 import "@boomi/exosphere/dist/styles.css";
+import "@boomi/exosphere/dist/icon.js";
 
 const nunitoSans = Nunito_Sans({ subsets: ['latin'], variable: '--font-nunito-sans' });
 
@@ -130,6 +137,8 @@ See [`assets/framework-setup-snippets/next-layout.tsx`](../../assets/framework-s
 **"Hydration mismatch" warnings** — Component rendered something different on server vs. client. For `ExDialog` and similar portal components, use the `{open && <...>}` gating pattern above.
 
 **Components render unstyled in dev, fine in prod** — Confirm `@boomi/exosphere/dist/styles.css` is imported from `app/layout.tsx` (not a page-level file that might not load).
+
+**Icons (dialog close X, combobox chevrons, toasts, `<ExIcon>`) render as empty boxes** — `@boomi/exosphere/dist/icon.js` isn't imported from `app/layout.tsx`. Add it alongside the `styles.css` import. See [`foundation/iconography.md`](../foundation/iconography.md).
 
 **Turbopack can't resolve `@boomi/exosphere/dist/styles.css`** — Check you're using a recent Next version. Turbopack CSS support has improved in 14+.
 

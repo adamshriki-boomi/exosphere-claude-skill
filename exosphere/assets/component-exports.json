@@ -108,7 +108,7 @@
     { "react_name": "ExJsonEditor", "web_component_tag": "ex-json-editor", "module_path": "@boomi/exosphere/dist/react/json-editor", "prop_enums": [], "category": "Editors", "parent": null, "since_version": null, "note": "Wraps jsoneditor." },
     { "react_name": "ExRichTextEditor", "web_component_tag": "ex-rich-text-editor", "module_path": "@boomi/exosphere/dist/react/rich-text-editor", "prop_enums": [], "category": "Editors", "parent": null, "since_version": null, "note": "Wraps SunEditor + @livingdocs/editable.js." },
 
-    { "react_name": "ExIcon", "web_component_tag": "ex-icon", "module_path": "@boomi/exosphere/dist/react/icon", "prop_enums": ["IconVariant", "IconSize"], "category": "Utility", "parent": null, "since_version": null, "note": "4 icon sets available: v1/v2/v3/FullColor. See references/foundation/iconography.md." },
+    { "react_name": "ExIcon", "web_component_tag": "ex-icon", "module_path": "@boomi/exosphere/dist/react/icon", "prop_enums": ["IconVariant", "IconSize"], "category": "Utility", "parent": null, "since_version": null, "note": "Requires '@boomi/exosphere/dist/icon.js' imported at app root (7.x+) — missing this import silently renders every icon (including internal icons in ExDialog, ExCombobox, ExToast) as empty. Shipped catalog tiers: primary / V2 / V1 / Archive. See references/foundation/iconography.md." },
     { "react_name": "ExAvatar", "web_component_tag": "ex-avatar", "module_path": "@boomi/exosphere/dist/react/avatar", "prop_enums": ["AvatarType", "AvatarSize"], "category": "Utility", "parent": null, "since_version": null }
   ],
   "non_component_exports": [
