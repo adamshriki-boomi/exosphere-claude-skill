@@ -1,0 +1,7 @@
+{
+  "name": "weird-layout",
+  "private": true,
+  "dependencies": {
+    "@boomi/exosphere": "^7.8.3"
+  }
+}

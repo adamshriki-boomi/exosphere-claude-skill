@@ -10,6 +10,14 @@ Each entry names the **Exosphere version** that the snapshot inside this skill w
 
 _Nothing yet._
 
+## [1.0.0-alpha.4] — 2026-04-23
+
+Verification-tooling fix: alpha.3 made the `icon.js` root-import contract mandatory throughout the skill's guidance, but the skill had no script that actually checked for it in a user project. A naive `grep` on the path produces false positives against markdown memory bodies and string constants (observed in practice: an agent reported grep hits at `constants.ts:289,294` that turned out to be inside a string). This release adds the missing verification script. Same Exosphere snapshot (`7.8.3`).
+
+### Added
+
+- **`scripts/verify-root-imports.mjs`** — closes a verification gap that let real apps ship without the mandatory `@boomi/exosphere/dist/icon.js` import (silent empty icons everywhere). The script scans framework-convention entry files (`src/main.{tsx,jsx,ts,js}`, `app/layout.*`, `pages/_app.*`, `src/app/app.module.ts`, `index.html`, etc.) and passes only when one of them contains both `styles.css` *and* `icon.js` as real top-level imports. Four layers of defense against the false-positive pattern observed in practice (grep hits on `@boomi/exosphere/dist/icon.js` inside a `constants.ts` markdown memory body, which is not a real import): (1) scope to known entry-file names; (2) cap the scan window to the first 200 lines; (3) anchor the regex to `^import\s+['"]…['"]`; and (4) lexer-lite state mask that rejects any match whose `import` keyword actually sits inside a string / comment / template literal. Supports `--json` for programmatic use. Wired into `SKILL.md` steps 1 (Orient) and 6 (Verify before reporting complete), and into the "Success looks like" checklist. Fixtures and a regression harness live under `build-tools/script-tests/` (outside the packaged skill): `fixtures/` covers pass (React / Next / Angular / Vue / HTML), fail (missing icon.js / missing styles.css / neither), split-across-files (both imports present but in separate entry files → fail, because only one of them will actually load), and the motivating false-positive fixture (paths appear inside a template literal only → must fail); `test-verify-root-imports.mjs` runs the whole set and checks exit codes against the `pass-` / `fail-` / `warn-` directory-name convention.
+
 ## [1.0.0-alpha.3] — 2026-04-23
 
 Icon-rendering fix: the skill used to omit the mandatory `icon.js` root import from every new-user path. Apps generated from the skill would silently render empty icons in dialogs, comboboxes, toasts, date-pickers, pagination, side-drawers, and anywhere `<ex-icon>` or `<ex-icon-button>` appeared. Same Exosphere snapshot (`7.8.3`); documentation-level fix.

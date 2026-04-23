@@ -13,7 +13,7 @@ description: |
   When in doubt about an Ex-prefixed name or a Boomi UI task, trigger.
 license: BSD-3-Clause
 metadata:
-  version: 1.0.0-alpha.3
+  version: 1.0.0-alpha.4
   exosphere_version: 7.8.3
   built_at: "2026-04-23"
   official: true
@@ -26,7 +26,7 @@ You are now an Exosphere specialist. Every UI decision goes through the Exospher
 
 ## About this snapshot
 
-This skill is version **1.0.0-alpha.3**, built against **`@boomi/exosphere@7.8.3`**. `CHANGELOG.md` (in this skill's root) lists what each version includes. `manifest.json` has the machine-readable version data. If the user's project is on a newer Exosphere than 7.8.3, you may hit components / props that are missing from the local references — see *When a reference is missing* below.
+This skill is version **1.0.0-alpha.4**, built against **`@boomi/exosphere@7.8.3`**. `CHANGELOG.md` (in this skill's root) lists what each version includes. `manifest.json` has the machine-readable version data. If the user's project is on a newer Exosphere than 7.8.3, you may hit components / props that are missing from the local references — see *When a reference is missing* below.
 
 ## What Exosphere is (the essentials)
 
@@ -45,7 +45,7 @@ Before writing any markup:
 
 - Run `scripts/detect-framework.sh` in the target project to pick the framework context (React / Next / Angular / Vue / other). This reads `package.json` and tells you what you're working with.
 - Confirm Exosphere is installed: look for `@boomi/exosphere` in `package.json` dependencies. If missing, consult `references/installation.md` and offer to install.
-- Confirm **both** root imports are present in an app-root file (e.g. `main.tsx`, `app/layout.tsx`, `src/main.js`, `main.ts`):
+- Confirm **both** root imports are present in an app-root file (e.g. `main.tsx`, `app/layout.tsx`, `src/main.js`, `main.ts`). Do not eyeball this — run `scripts/verify-root-imports.mjs` from the project root. It scans the conventional entry files and exits 0 only if one of them contains both `@boomi/exosphere/dist/styles.css` and `@boomi/exosphere/dist/icon.js` as real top-level imports (it lexes to reject false positives from strings / comments / template literals — e.g., a `grep` hit in a `constants.ts` markdown body does not count). On failure, it prints per-file status and actionable next steps.
   - `@boomi/exosphere/dist/styles.css` — missing this is the #1 cause of "components render as plain text."
   - `@boomi/exosphere/dist/icon.js` — missing this renders every icon (dialog close X, combobox chevron, toast status markers, `<ex-icon>`, `<ex-icon-button>`) as silent empty boxes. See `references/foundation/iconography.md`.
 - Run `scripts/check-exosphere-version.mjs` to compare the project's installed Exosphere version to this snapshot (7.8.3). If the project is on something newer, mention the drift to the user up front so they know to expect on-demand lookups.
@@ -98,6 +98,7 @@ Before deciding "not in Exosphere," cross-check *both* `assets/component-exports
 
 ### 6. Verify before reporting complete
 
+- Run `scripts/verify-root-imports.mjs` again from the project root. It confirms an app-root entry file still has both `styles.css` and `icon.js`. Cheap, runs in ~10 ms, and catches the class of bug where a refactor moves or strips the icon registry import and every icon silently becomes an empty box.
 - Run `scripts/verify-token-usage.mjs` over the changed files. It flags raw hex / px / rgb values that should have been tokens.
 - Run `scripts/verify-component-usage.mjs`. It flags raw `<button>` / `<input>` / `<select>` / `<dialog>` / `<a>` elements where an Exosphere component would apply.
 - For UI changes, open in a browser if possible — type checking + tests verify correctness, not feature correctness.
@@ -181,7 +182,8 @@ If `scripts/check-exosphere-version.mjs` reports the project is on a newer Exosp
 After a feature is built with this skill:
 
 1. Every visible UI unit is either an `Ex*` component or a flagged custom extension.
-2. All colors/spacing come from `--exo-*` tokens; `scripts/verify-token-usage.mjs` passes.
-3. Framework setup is right (`CUSTOM_ELEMENTS_SCHEMA` for Angular, `isCustomElement` for Vue, `'use client'` in Next, etc.).
-4. Any custom extension is banner-flagged and recorded in `EXOSPHERE-CUSTOM.md`.
-5. Light + dark themes both look correct (this is automatic if tokens are used; verify visually).
+2. Both root imports (`styles.css` + `icon.js`) are present in an app-root entry file; `scripts/verify-root-imports.mjs` passes.
+3. All colors/spacing come from `--exo-*` tokens; `scripts/verify-token-usage.mjs` passes.
+4. Framework setup is right (`CUSTOM_ELEMENTS_SCHEMA` for Angular, `isCustomElement` for Vue, `'use client'` in Next, etc.).
+5. Any custom extension is banner-flagged and recorded in `EXOSPHERE-CUSTOM.md`.
+6. Light + dark themes both look correct (this is automatic if tokens are used; verify visually).
