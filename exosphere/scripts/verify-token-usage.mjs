@@ -5,15 +5,51 @@
 // Scope: .ts .tsx .js .jsx .vue .css .scss .html files at paths you pass.
 // By default, scans the current working directory recursively.
 //
-// Exits 1 if any violations found, 0 otherwise. Always prints findings.
+// Exit codes:
+//   0 — clean scan, no findings
+//   1 — findings reported
+//   2 — no files matched any passed path (likely a glob/path typo)
 //
 // Usage:
 //   node verify-token-usage.mjs [paths...]
-//     # Scan specific files/dirs
+//     # Scan specific files, directories, or simple globs.
 //   node verify-token-usage.mjs --since HEAD
 //     # Scan files changed vs. the given git ref (falls back to full scan on error)
 //   node verify-token-usage.mjs --allow-list .exosphere-allow
-//     # Skip lines/paths matched by a simple allow file (one pattern per line)
+//     # Skip lines matched by a simple allow file (see ALLOW LIST below)
+//
+// PATHS
+//   Each positional arg may be:
+//     - a file           (scanned if its extension matches)
+//     - a directory      (walked recursively)
+//     - a simple glob    (matched manually — see below)
+//
+//   Supported glob form:        root/**/*.ext     or    root/**/*.{ext1,ext2}
+//   Anything fancier is NOT supported; the script will warn and skip it.
+//   Remember to unquote the glob in your shell (or this script parses it manually):
+//     ✅ node verify-token-usage.mjs src/**/*.{ts,tsx,css,scss}
+//     ⚠️  node verify-token-usage.mjs 'src/**/*.{ts,tsx,css,scss}'   # quoted — script parses it
+//   Any path that resolves to zero files prints a warning. If NO path matches any
+//   file at all, the script exits 2 so a CI job will fail instead of passing silently.
+//
+// ALLOW LIST (--allow-list FILE)
+//   File format: one pattern per line; `#` starts a comment; blank lines ignored.
+//   Matching is SUBSTRING-ON-LINE, not path-based. If any pattern appears anywhere
+//   in a source line's text, that entire line is skipped for all checks.
+//   This is intentional — you can silence a specific inline literal ("#1a1a1a") or
+//   a specific file pattern ("src/legacy/") in the same file with the same mechanism.
+//   Example:
+//     # tolerate mocked colors in Storybook stories
+//     .stories.
+//     # tolerate a one-off legacy constant
+//     LEGACY_HEX = '#1a1a1a'
+//
+// SHADOW COMPOSITIONS
+//   Exosphere 7.8.3 ships shadow *colors* (--exo-color-shadow-weak|moderate|strong)
+//   but no offset/spread tokens. A line like:
+//     box-shadow: 0 2px 8px var(--exo-color-shadow-weak);
+//   is treated as compliant — raw px on a line that references --exo-color-shadow-*
+//   is not flagged. (If Exosphere ships full --exo-shadow-* tokens later, switch.)
 
 import fs from 'node:fs';
 import path from 'node:path';
@@ -25,6 +61,10 @@ const RGBRGBA = /\brgba?\s*\(/;
 // borders because it's near-universal, but flag anything else.
 const PX     = /(?<!\w)(\d+(?:\.\d+)?)px\b/;
 const ALLOWED_PX_EXACT = new Set(['1px', '0px']);
+// Lines that reference a shadow-color token are composing a box-shadow. Exosphere
+// doesn't ship --exo-shadow-* offset/spread tokens, so the px offsets on the same
+// line are expected and not flagged. See the "SHADOW COMPOSITIONS" header comment.
+const SHADOW_COLOR_TOKEN = /--exo-color-shadow-/;
 
 const EXTS = new Set(['.ts', '.tsx', '.js', '.jsx', '.mjs', '.cjs', '.vue', '.css', '.scss', '.less', '.html', '.htm']);
 const IGNORE_DIRS = new Set(['node_modules', 'dist', 'build', 'out', '.next', '.nuxt', '.svelte-kit', '.cache', 'coverage', '.git']);
@@ -93,10 +133,44 @@ function scanFile(file, allowList) {
     const pxMatch = line.match(new RegExp(PX.source, 'g'));
     if (pxMatch) {
       const bad = pxMatch.filter(v => !ALLOWED_PX_EXACT.has(v));
-      if (bad.length) hits.push({ line: idx + 1, text: line, kind: `px (${bad.join(', ')})` });
+      // Lines composing a box-shadow against a shadow-color token are exempt —
+      // Exosphere doesn't ship offset/spread tokens in 7.8.3.
+      if (bad.length && !SHADOW_COLOR_TOKEN.test(line)) {
+        hits.push({ line: idx + 1, text: line, kind: `px (${bad.join(', ')})` });
+      }
     }
   });
   return hits;
+}
+
+// Expand a user-supplied path arg into a concrete list of files.
+// Returns { files, note } — `note` is a warning string when the arg is empty or unparseable.
+// Supported glob form is deliberately minimal: `root/**/*.ext` or `root/**/*.{a,b,c}`.
+// Anything more elaborate prints a warning and returns zero files.
+const GLOB_CHARS = /[*?\[\{]/;
+const SIMPLE_GLOB = /^([^*?\[\{]+?)\/\*\*\/\*\.(\{[^}]+\}|[^/]+)$/;
+
+function expandArg(arg) {
+  if (!GLOB_CHARS.test(arg)) {
+    if (!fs.existsSync(arg)) return { files: [], note: `path does not exist: ${arg}` };
+    return { files: walk(arg), note: null };
+  }
+  const m = arg.match(SIMPLE_GLOB);
+  if (!m) {
+    return {
+      files: [],
+      note: `unsupported glob "${arg}" — use a directory path or a simple pattern like src/**/*.{ts,tsx,css}`,
+    };
+  }
+  const [, root, extSpec] = m;
+  if (!fs.existsSync(root)) {
+    return { files: [], note: `glob root does not exist: ${root}` };
+  }
+  const exts = extSpec.startsWith('{') && extSpec.endsWith('}')
+    ? extSpec.slice(1, -1).split(',').map(e => '.' + e.trim().replace(/^\./, ''))
+    : ['.' + extSpec.replace(/^\./, '')];
+  const files = walk(root).filter(f => exts.includes(path.extname(f)));
+  return { files, note: null };
 }
 
 async function main() {
@@ -104,17 +178,33 @@ async function main() {
   const allowList = loadAllowList(args.allowList);
 
   let files;
+  let pathWarnings = [];
   if (args.since) {
     files = gitChangedFiles(args.since) || [];
     if (files.length === 0) {
       console.log('[verify-tokens] no changed files (or git unavailable); falling back to full scan');
-      files = args.paths.flatMap(p => walk(p));
+      const expanded = args.paths.map(p => ({ arg: p, ...expandArg(p) }));
+      files = expanded.flatMap(e => e.files);
+      pathWarnings = expanded.filter(e => e.note || e.files.length === 0);
     }
   } else {
-    files = args.paths.flatMap(p => walk(p));
+    const expanded = args.paths.map(p => ({ arg: p, ...expandArg(p) }));
+    files = expanded.flatMap(e => e.files);
+    pathWarnings = expanded.filter(e => e.note || e.files.length === 0);
   }
 
+  for (const w of pathWarnings) {
+    if (w.note) console.warn(`[verify-tokens] ${w.note}`);
+    else        console.warn(`[verify-tokens] no files matched: ${w.arg}`);
+  }
+
+  const preFilter = files.length;
   files = files.filter(shouldScan);
+  // If we got args but nothing matched any scannable file, that's almost always a typo.
+  if (preFilter === 0 && args.paths.length > 0) {
+    console.error(`[verify-tokens] no files matched any passed path — check your paths/globs.`);
+    process.exit(2);
+  }
 
   let total = 0;
   for (const file of files) {

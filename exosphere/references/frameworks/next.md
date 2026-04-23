@@ -10,9 +10,16 @@ This page covers the App Router (Next 13+). Pages Router works similarly — tre
 npm i @boomi/exosphere --save
 ```
 
-## Wire the root imports — in root layout
+## Wire the root imports — two recipes
 
-Two modules, both required:
+Exosphere needs two modules imported at the app root:
+
+- `@boomi/exosphere/dist/styles.css` — component styling.
+- `@boomi/exosphere/dist/icon.js` — icon registry (7.x+). This module calls `customElements.define()` at top-level and touches `window`.
+
+Where the second one is imported matters in the App Router. Pick one of the recipes below.
+
+### Recipe A — imports directly in `app/layout.tsx` (simplest; works in most apps)
 
 ```tsx
 // app/layout.tsx
@@ -28,10 +35,70 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 }
 ```
 
-These imports in `layout.tsx` (a Server Component) are fine — `styles.css` is CSS, and `icon.js` is a side-effect module that populates a `window[Symbol.for("$$EXOSPHERE_ICON$$")]` registry on the client when the bundle loads. Only the Exosphere **components themselves** need `'use client'`.
+`layout.tsx` is a Server Component, but both imports are side-effect imports — Next's bundler includes them in the client bundle where they actually run. This works in most App Router setups.
+
+**If you see an SSR crash** like `ReferenceError: customElements is not defined` (or similar: `window`, `HTMLElement`, `document`) sourced at `@boomi/exosphere/dist/icon.js`, switch to Recipe B. Some bundler configurations execute the import graph server-side even for side-effect modules, and `icon.js` isn't guarded against that.
+
+### Recipe B — imports in a client-only `<Providers>` wrapper (safer)
+
+Creates a client boundary at the top of the tree and keeps the Lit registry out of the server render entirely.
+
+```tsx
+// app/providers.tsx
+'use client';
+import { useEffect } from 'react';
+import "@boomi/exosphere/dist/styles.css"; // CSS is safe either way — kept here for locality
+// icon.js runs ONLY on the client because this whole file is 'use client'
+import "@boomi/exosphere/dist/icon.js";
+
+export function Providers({ children }: { children: React.ReactNode }) {
+  // Nothing else to do — both imports are pure side-effect.
+  // (A useEffect is not required; the imports fire when this client bundle loads.)
+  return <>{children}</>;
+}
+```
+
+```tsx
+// app/layout.tsx
+import { Providers } from "./providers";
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en">
+      <body>
+        <Providers>{children}</Providers>
+      </body>
+    </html>
+  );
+}
+```
+
+Keep the layout a Server Component so the rest of your app still benefits from server rendering.
+
+### Failure modes
 
 - Missing `styles.css` → components render unstyled.
-- Missing `icon.js` → every icon (including the close X inside `ExDialog`, chevrons inside `ExCombobox`, status markers inside `ExToast`) renders empty, silently. See [`foundation/iconography.md`](../foundation/iconography.md).
+- Missing `icon.js` → every icon (close X inside `ExDialog`, chevrons inside `ExCombobox`, status markers inside `ExToast`, `<ExIcon>`, `<ex-icon-button>`) renders empty, silently. See [`foundation/iconography.md`](../foundation/iconography.md).
+- Both imports present but in different files than above → fine, as long as at least one loads on every page. Prefer the layout-level approach so you can't accidentally ship a page without the icon registry.
+
+### TypeScript — silence TS7016 on `icon.js`
+
+`@boomi/exosphere/dist/icon.js` ships without a sibling `.d.ts`, so a TypeScript project will raise:
+
+```
+error TS7016: Could not find a declaration file for module '@boomi/exosphere/dist/icon.js'.
+```
+
+Workaround — add a one-line ambient declaration anywhere in your TS project (e.g., `src/types/boomi-exosphere.d.ts` or a root-level `global.d.ts`):
+
+```ts
+// global.d.ts
+declare module "@boomi/exosphere/dist/icon.js";
+```
+
+No body needed — this is a side-effect-only module. Make sure the file is picked up by `tsconfig.json` (the default `"include": ["**/*.ts", "**/*.tsx"]` covers it; if you've narrowed `include`, add it explicitly).
+
+A ready-to-drop copy lives in [`assets/framework-setup-snippets/boomi-exosphere.d.ts`](../../assets/framework-setup-snippets/boomi-exosphere.d.ts).
 
 ## Use components — mark as client
 
@@ -126,13 +193,19 @@ If the Next app uses Tailwind, you can mix but **don't replace Exosphere tokens 
 
 If you add Vitest to a Next project for unit tests, follow the [React Vitest setup](./react.md#vitest-configuration). Add a `vitest.setup.ts` that imports the CSS.
 
-## Starter file
+## Starter files
 
-See [`assets/framework-setup-snippets/next-layout.tsx`](../../assets/framework-setup-snippets/next-layout.tsx).
+- [`next-layout.tsx`](../../assets/framework-setup-snippets/next-layout.tsx) — Recipe A (imports in `app/layout.tsx`).
+- [`next-providers.tsx`](../../assets/framework-setup-snippets/next-providers.tsx) — Recipe B (client-only `<Providers>` wrapper). Use when Recipe A crashes during SSR.
+- [`boomi-exosphere.d.ts`](../../assets/framework-setup-snippets/boomi-exosphere.d.ts) — the one-line ambient module declaration that silences TS7016 for `@boomi/exosphere/dist/icon.js`.
 
 ## Troubleshooting
 
 **"ReferenceError: window is not defined" / "document is not defined" during build** — You're rendering an Exosphere component in a Server Component. Add `'use client'` to the file.
+
+**"ReferenceError: customElements is not defined" sourced at `@boomi/exosphere/dist/icon.js` during build** — Recipe A's bundler is executing `icon.js` server-side. Switch to Recipe B (move both root imports into a `'use client'` `<Providers>` wrapper — see "Wire the root imports" above).
+
+**`TS7016: Could not find a declaration file for module '@boomi/exosphere/dist/icon.js'`** — `dist/icon.js` has no sibling `.d.ts`. Add a one-line ambient declaration (`declare module "@boomi/exosphere/dist/icon.js";`) to any `.d.ts` file in your TypeScript include scope. Ready-to-drop snippet in [`assets/framework-setup-snippets/boomi-exosphere.d.ts`](../../assets/framework-setup-snippets/boomi-exosphere.d.ts).
 
 **"Hydration mismatch" warnings** — Component rendered something different on server vs. client. For `ExDialog` and similar portal components, use the `{open && <...>}` gating pattern above.
 

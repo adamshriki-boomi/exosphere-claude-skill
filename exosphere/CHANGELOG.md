@@ -10,6 +10,28 @@ Each entry names the **Exosphere version** that the snapshot inside this skill w
 
 _Nothing yet._
 
+## [1.0.0-alpha.5] — 2026-04-23
+
+Documentation + tooling fixes from an independent review of alpha.3 against a real Next.js + `@boomi/exosphere@7.8.1` app. Same Exosphere snapshot (`7.8.3`); no reference data regenerated.
+
+### Fixed
+
+- **README install instructions were broken.** The prior `/plugin install /path/to/exosphere.skill` recipe fails — Claude Code's `/plugin install` only accepts marketplace identifiers, not local `.skill` paths. The file is a zip archive; the working install is `unzip -o exosphere.skill -d ~/.claude/skills/` (PowerShell equivalent also documented). README updated with both flows and an explicit note about the CLI limitation.
+- **`scripts/verify-token-usage.mjs` flagged legitimate shadow compositions.** Exosphere 7.8.3 ships `--exo-color-shadow-{weak,moderate,strong}` but no offset/spread tokens, so any custom `box-shadow: 0 2px 8px var(--exo-color-shadow-weak);` line was flagged on the `2px`/`8px` offsets. The script now treats lines referencing `--exo-color-shadow-*` as compliant — the tokenized color is the signal that the px offsets are composing a tokenized shadow. Will revisit when Exosphere ships full shadow-elevation tokens.
+- **Verify scripts silently scanned zero files when passed a quoted glob.** Shells don't expand globs inside single/double quotes, so `node verify-token-usage.mjs 'src/**/*.{ts,tsx}'` was handed a literal path that didn't exist and reported `0 scanned file(s)` — a CI job would pass with nothing checked. Both `verify-token-usage.mjs` and `verify-component-usage.mjs` now (a) support a simple glob form `root/**/*.ext` or `root/**/*.{a,b}` natively, (b) warn per-arg for paths that resolve to zero files, and (c) exit 2 when no path matches any file, so CI fails loudly on a typo. The `--allow-list` docs now explicitly state that matching is substring-on-line (not path-based), matching the actual implementation.
+
+### Added
+
+- **Next.js App Router: Recipe B (client-only `<Providers>` wrapper).** Some bundler configurations execute the `@boomi/exosphere/dist/icon.js` side-effect import server-side and crash with `ReferenceError: customElements is not defined`. `references/frameworks/next.md` now documents both recipes (A: imports in `app/layout.tsx`; B: imports in a `'use client'` Providers wrapper) with a troubleshooting entry pointing A → B on that specific error. New starter snippet at `assets/framework-setup-snippets/next-providers.tsx`.
+- **TypeScript TS7016 workaround for `icon.js`.** `@boomi/exosphere/dist/icon.js` ships without a sibling `.d.ts`, so TS projects raise `error TS7016`. `references/frameworks/next.md` documents the one-line ambient declaration (`declare module "@boomi/exosphere/dist/icon.js";`), and the ready-to-drop snippet lives at `assets/framework-setup-snippets/boomi-exosphere.d.ts`. Referenced from `next-layout.tsx` header comment too so it's discoverable from either direction.
+- **"Gaps in 7.8.3" section in `references/foundation/design-tokens.md`.** Explicitly documents the three categories that sometimes trip users up: (a) motion / duration / easing — none shipped, with conservative raw values to use in the meantime and a recommendation to centralize in one file; (b) shadow offsets + spread — only the colors ship, px offsets are necessarily raw (and the verify script now knows this); (c) typography font-size scale — shipped (`--exo-font-size-x-micro` through `7x-large`) but commonly missed because they're not in `css-theme-variables.json` (that JSON only tracks theme-variable tokens). Directs readers to the existing Font sizes table instead of defaulting to arbitrary Tailwind `text-[15px]`.
+
+### Notes
+
+- No change to `exosphere_version` — still `@boomi/exosphere@7.8.3`.
+- No change to the skill trigger description; the trigger-eval loop doesn't need to re-run.
+- Upstream asks surfaced by the review (ship `dist/icon.d.ts` in the npm package; ship `--exo-shadow-*` offset tokens; ship `--exo-motion-*` / `--exo-duration-*` / `--exo-easing-*` tokens) are **not** in scope for this release — they require PRs to the `@boomi/exosphere` package. Draft patches will live under `exosphere-workspace/upstream-patches/`.
+
 ## [1.0.0-alpha.4] — 2026-04-23
 
 Verification-tooling fix: alpha.3 made the `icon.js` root-import contract mandatory throughout the skill's guidance, but the skill had no script that actually checked for it in a user project. A naive `grep` on the path produces false positives against markdown memory bodies and string constants (observed in practice: an agent reported grep hits at `constants.ts:289,294` that turned out to be inside a string). This release adds the missing verification script. Same Exosphere snapshot (`7.8.3`).

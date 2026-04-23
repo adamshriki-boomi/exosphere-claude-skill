@@ -341,3 +341,47 @@ Raw literals only belong in:
 
 - Values that are genuinely outside the design system's concerns (e.g., a specific 3rd-party component's pixel-perfect embed, not a Boomi UI).
 - Low-level CSS utility inside a flagged custom component (see [`decision-guides/component-vs-custom.md`](../decision-guides/component-vs-custom.md)).
+
+---
+
+## Gaps in 7.8.3 — categories Exosphere doesn't tokenize yet
+
+Real categories where `--exo-*` tokens are **missing** in 7.8.3. If you need values here, raw literals are unavoidable today — but confine them to one place (a `motion.ts` / `shadows.css` module, or a flagged custom component) so the eventual Exosphere tokens are a one-file migration.
+
+### Motion / duration / easing
+
+No `--exo-motion-*`, `--exo-duration-*`, or `--exo-easing-*` tokens exist. Components ship their own transitions internally but don't expose them.
+
+**Recommendation** — if you're building a custom animation, use these conservative values (they mirror what the shipped Exosphere components feel like):
+
+```css
+/* Small, reactive UI (hover, focus, dismiss) */
+transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
+
+/* Medium — popovers, menus opening */
+transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+
+/* Large — sheets, drawers, page transitions */
+transition: all 300ms cubic-bezier(0.2, 0, 0, 1);
+```
+
+Centralize these in one file in your app (e.g., `src/theme/motion.ts`) so migration to future `--exo-motion-*` tokens is trivial. `scripts/verify-token-usage.mjs` does not flag motion literals (it only checks hex/rgb/px).
+
+### Shadow offsets + spread
+
+`--exo-color-shadow-weak | moderate | strong` exist — these are the **colors** for box-shadows. There are **no** `--exo-shadow-*` tokens that bundle offset and spread, so the numeric offsets have to be raw:
+
+```css
+/* ✅ tokenized color, raw offsets — the script treats this as compliant */
+.card {
+  box-shadow: 0 2px 8px var(--exo-color-shadow-weak);
+}
+```
+
+`scripts/verify-token-usage.mjs` recognizes the `--exo-color-shadow-*` reference on a line and will **not** flag the px offsets on the same line. When Exosphere ships full shadow-elevation tokens, the skill will switch to flagging composed shadows too.
+
+### Typography font-size scale — shipped, often missed
+
+Not a gap — but often assumed to be one, because `assets/css-theme-variables.json` only contains theme-variable tokens (light/dark swaps) and font sizes are constants. The full `--exo-font-size-*` scale (`x-micro` through `7x-large`, covering 10 px through 40 px) IS shipped. See the [Font sizes table above](#font-sizes-rem-based-assumes-root-font-size-16px). Use those tokens instead of ad-hoc `text-[15px]` values or arbitrary `rem` numbers.
+
+If you need a size that's not on the scale, use the closest scale value rather than inventing a new literal — or propose a new step to the scale if it's a real systemic gap.

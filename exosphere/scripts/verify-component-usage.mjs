@@ -5,11 +5,22 @@
 // Only scans TSX / JSX / Vue SFC / HTML / Svelte. For TS/JS, it would need
 // a real parser (beyond the scope here) and the signal-to-noise ratio drops.
 //
-// Exits 1 on findings, 0 if clean.
+// Exit codes:
+//   0 — clean scan, no findings
+//   1 — findings reported
+//   2 — no files matched any passed path (likely a glob/path typo)
 //
 // Usage:
-//   node verify-component-usage.mjs [paths...]
-//   node verify-component-usage.mjs --since HEAD
+//   node verify-component-usage.mjs [paths...]    # files, dirs, or simple globs
+//   node verify-component-usage.mjs --since HEAD  # files changed vs. ref
+//   node verify-component-usage.mjs --soft        # also flag <a>, <table>, <nav>
+//
+// PATHS
+//   Each positional arg may be a file, a directory (walked recursively), or a
+//   simple glob in the form `root/**/*.ext` or `root/**/*.{ext1,ext2}`.
+//   Fancier globs are not supported; the script warns and skips them.
+//   Any path that resolves to zero files prints a warning; if NO path matches
+//   any file at all, the script exits 2 so CI doesn't pass silently on a typo.
 
 import fs from 'node:fs';
 import path from 'node:path';
@@ -53,6 +64,34 @@ function gitChangedFiles(ref) {
   } catch { return null; }
 }
 
+// See verify-token-usage.mjs for the same expander — we duplicate it here so each
+// script stays dependency-free and self-contained.
+const GLOB_CHARS = /[*?\[\{]/;
+const SIMPLE_GLOB = /^([^*?\[\{]+?)\/\*\*\/\*\.(\{[^}]+\}|[^/]+)$/;
+
+function expandArg(arg) {
+  if (!GLOB_CHARS.test(arg)) {
+    if (!fs.existsSync(arg)) return { files: [], note: `path does not exist: ${arg}` };
+    return { files: walk(arg), note: null };
+  }
+  const m = arg.match(SIMPLE_GLOB);
+  if (!m) {
+    return {
+      files: [],
+      note: `unsupported glob "${arg}" — use a directory or a simple pattern like src/**/*.{tsx,jsx}`,
+    };
+  }
+  const [, root, extSpec] = m;
+  if (!fs.existsSync(root)) {
+    return { files: [], note: `glob root does not exist: ${root}` };
+  }
+  const exts = extSpec.startsWith('{') && extSpec.endsWith('}')
+    ? extSpec.slice(1, -1).split(',').map(e => '.' + e.trim().replace(/^\./, ''))
+    : ['.' + extSpec.replace(/^\./, '')];
+  const files = walk(root).filter(f => exts.includes(path.extname(f)));
+  return { files, note: null };
+}
+
 function scanFile(file, { soft }) {
   const text = fs.readFileSync(file, 'utf8');
   // crude: look for opening tags "<tag" (not <tag>/< TagName or <ex- / <Ex)
@@ -92,17 +131,32 @@ function parseArgs(argv) {
 async function main() {
   const args = parseArgs(process.argv.slice(2));
   let files;
+  let pathWarnings = [];
   if (args.since) {
     files = gitChangedFiles(args.since) || [];
     if (files.length === 0) {
       console.log('[verify-components] no changed files (or git unavailable); falling back to full scan');
-      files = args.paths.flatMap(p => walk(p));
+      const expanded = args.paths.map(p => ({ arg: p, ...expandArg(p) }));
+      files = expanded.flatMap(e => e.files);
+      pathWarnings = expanded.filter(e => e.note || e.files.length === 0);
     }
   } else {
-    files = args.paths.flatMap(p => walk(p));
+    const expanded = args.paths.map(p => ({ arg: p, ...expandArg(p) }));
+    files = expanded.flatMap(e => e.files);
+    pathWarnings = expanded.filter(e => e.note || e.files.length === 0);
   }
 
+  for (const w of pathWarnings) {
+    if (w.note) console.warn(`[verify-components] ${w.note}`);
+    else        console.warn(`[verify-components] no files matched: ${w.arg}`);
+  }
+
+  const preFilter = files.length;
   files = files.filter(f => EXTS.has(path.extname(f)));
+  if (preFilter === 0 && args.paths.length > 0) {
+    console.error(`[verify-components] no files matched any passed path — check your paths/globs.`);
+    process.exit(2);
+  }
 
   let total = 0;
   for (const file of files) {

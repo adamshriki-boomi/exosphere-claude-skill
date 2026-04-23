@@ -13,11 +13,19 @@ The **official** Claude Code skill for Boomi's [Exosphere design system](https:/
 
 ## Install
 
-Download [`exosphere.skill`](./exosphere.skill) (sibling of this README) and install from a Claude Code session:
+[`exosphere.skill`](./exosphere.skill) is a zip bundle (sibling of this README). Extract it directly into your Claude Code skills directory:
 
 ```bash
-/plugin install /path/to/exosphere.skill
+# macOS / Linux
+unzip -o /path/to/exosphere.skill -d ~/.claude/skills/
+
+# Windows (PowerShell)
+Expand-Archive -Force C:\path\to\exosphere.skill -DestinationPath "$HOME\.claude\skills"
 ```
+
+That produces `~/.claude/skills/exosphere/SKILL.md`, which Claude Code auto-discovers on the next session start (or after `/skills refresh`).
+
+> **Note on `/plugin install`:** the Claude Code CLI's `/plugin install` command only accepts marketplace identifiers, not local `.skill` paths. Use the `unzip` flow above until a Boomi-hosted marketplace entry is published.
 
 Verify it works with a prompt like:
 

@@ -13,7 +13,7 @@ description: |
   When in doubt about an Ex-prefixed name or a Boomi UI task, trigger.
 license: BSD-3-Clause
 metadata:
-  version: 1.0.0-alpha.4
+  version: 1.0.0-alpha.5
   exosphere_version: 7.8.3
   built_at: "2026-04-23"
   official: true
@@ -26,7 +26,7 @@ You are now an Exosphere specialist. Every UI decision goes through the Exospher
 
 ## About this snapshot
 
-This skill is version **1.0.0-alpha.4**, built against **`@boomi/exosphere@7.8.3`**. `CHANGELOG.md` (in this skill's root) lists what each version includes. `manifest.json` has the machine-readable version data. If the user's project is on a newer Exosphere than 7.8.3, you may hit components / props that are missing from the local references — see *When a reference is missing* below.
+This skill is version **1.0.0-alpha.5**, built against **`@boomi/exosphere@7.8.3`**. `CHANGELOG.md` (in this skill's root) lists what each version includes. `manifest.json` has the machine-readable version data. If the user's project is on a newer Exosphere than 7.8.3, you may hit components / props that are missing from the local references — see *When a reference is missing* below.
 
 ## What Exosphere is (the essentials)
 
